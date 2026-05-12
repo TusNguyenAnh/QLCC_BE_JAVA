@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -13,8 +14,8 @@ public class ApartmentImportRow {
     private String buildingId;      // Tòa nhà
     private int floor;              // Tầng
     private String aptNumber;       // Số căn hộ
-    private Double grossArea;       // Diện tích sàn
-    private Double coefficient;     // Hệ số
+    private BigDecimal grossArea;       // Diện tích sàn
+    private BigDecimal coefficient;     // Hệ số
     private String aptType;         // Loại căn hộ
     private String description;     // Mô tả
     private List<String> errors;    // Validation errors

@@ -1,17 +1,18 @@
 package com.mbs.qlcc.entities.Apartment;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class ApartmentFactory implements IApartmentFactory {
-    
+
     @Override
     public Apartment create(String buildingId, String complexId, int floor,
-                           String aptNumber, Double grossArea, Double coefficient,
-                           String aptType, String description) {
-        
+                            String aptNumber, BigDecimal grossArea, BigDecimal coefficient,
+                            String aptType, String description) {
+
         // Tính carpet_area = gross_area * coefficient
-        Double carpetArea = grossArea * coefficient;
-        
+        BigDecimal carpetArea = grossArea.multiply(coefficient);
+
         Apartment apartment = new Apartment();
         apartment.setBuildingId(buildingId);
         apartment.setComplexId(complexId);
@@ -26,7 +27,7 @@ public class ApartmentFactory implements IApartmentFactory {
         apartment.setCreatedAt(LocalDateTime.now());
         apartment.setUpdatedAt(LocalDateTime.now());
         apartment.setDeletedAt(null);
-        
+
         return apartment;
     }
 }

@@ -1,5 +1,7 @@
 package com.mbs.qlcc.usecases.response.Apartment;
 
+import java.math.BigDecimal;
+
 /**
  * ApartmentResponse - Output DTO cho Apartment
  * Không bao gồm nhạy cảm fields như status
@@ -10,18 +12,17 @@ public class ApartmentResponse {
     private String complexId;
     private int floor;
     private String aptNumber;
-    private Double grossArea;
-    private Double carpetArea;
-    private Double coefficient;
+    private BigDecimal grossArea;
+    private BigDecimal carpetArea;
+    private BigDecimal coefficient;
     private String aptType;
     private String description;
+    private int status;
 
     public ApartmentResponse() {
     }
 
-    public ApartmentResponse(String id, String buildingId, String complexId, int floor,
-                            String aptNumber, Double grossArea, Double carpetArea,
-                            Double coefficient, String aptType, String description) {
+    public ApartmentResponse(String id, String buildingId, String complexId, int floor, String aptNumber, BigDecimal grossArea, BigDecimal carpetArea, BigDecimal coefficient, String aptType, String description, int status) {
         this.id = id;
         this.buildingId = buildingId;
         this.complexId = complexId;
@@ -32,6 +33,15 @@ public class ApartmentResponse {
         this.coefficient = coefficient;
         this.aptType = aptType;
         this.description = description;
+        this.status = status;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public String getId() {
@@ -74,27 +84,27 @@ public class ApartmentResponse {
         this.aptNumber = aptNumber;
     }
 
-    public Double getGrossArea() {
+    public BigDecimal getGrossArea() {
         return grossArea;
     }
 
-    public void setGrossArea(Double grossArea) {
+    public void setGrossArea(BigDecimal grossArea) {
         this.grossArea = grossArea;
     }
 
-    public Double getCarpetArea() {
+    public BigDecimal getCarpetArea() {
         return carpetArea;
     }
 
-    public void setCarpetArea(Double carpetArea) {
+    public void setCarpetArea(BigDecimal carpetArea) {
         this.carpetArea = carpetArea;
     }
 
-    public Double getCoefficient() {
+    public BigDecimal getCoefficient() {
         return coefficient;
     }
 
-    public void setCoefficient(Double coefficient) {
+    public void setCoefficient(BigDecimal coefficient) {
         this.coefficient = coefficient;
     }
 

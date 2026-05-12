@@ -1,5 +1,6 @@
 package com.mbs.qlcc.adapters.db.Apartment;
 
+import com.mbs.qlcc.adapters.db.Building.BuildingDataMapper;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,8 +25,9 @@ public class ApartmentDataMapper {
     @Column(name = "id")
     private String id;
 
-    @Column(name = "building_id", nullable = false)
-    private String buildingId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "building_id")
+    private BuildingDataMapper buildingDataMapper;
 
     @Column(name = "complex_id", nullable = false)
     private String complexId;
@@ -36,14 +38,14 @@ public class ApartmentDataMapper {
     @Column(name = "apt_number", length = 20, nullable = false)
     private String aptNumber;
 
-    @Column(name = "gross_area", nullable = false)
-    private Double grossArea;
+    @Column(name = "gross_area", nullable = false, precision = 10, scale = 2)
+    private BigDecimal grossArea;
 
-    @Column(name = "carpet_area", nullable = false)
-    private Double carpetArea;
+    @Column(name = "carpet_area", nullable = false,precision = 10, scale = 2)
+    private BigDecimal carpetArea;
 
     @Column(name = "coefficient", nullable = false)
-    private Double coefficient;
+    private BigDecimal coefficient;
 
     @Column(name = "apt_type", length = 100, nullable = false)
     private String aptType;

@@ -1,5 +1,6 @@
 package com.mbs.qlcc.entities.Apartment;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class Apartment {
@@ -8,9 +9,9 @@ public class Apartment {
     private String complexId;
     private int floor;
     private String aptNumber;
-    private Double grossArea;
-    private Double carpetArea;
-    private Double coefficient;
+    private BigDecimal grossArea;
+    private BigDecimal carpetArea;
+    private BigDecimal coefficient;
     private String aptType;
     private String description;
     private int status;
@@ -25,8 +26,8 @@ public class Apartment {
 
 
     public Apartment(String id, String buildingId, String complexId, int floor,
-                     String aptNumber, Double grossArea, Double carpetArea,
-                     Double coefficient, String aptType, String description,
+                     String aptNumber, BigDecimal grossArea, BigDecimal carpetArea,
+                     BigDecimal coefficient, String aptType, String description,
                      int status, LocalDateTime createdAt, LocalDateTime updatedAt,
                      LocalDateTime deletedAt) {
         this.id = id;
@@ -86,27 +87,27 @@ public class Apartment {
         this.aptNumber = aptNumber;
     }
 
-    public Double getGrossArea() {
+    public BigDecimal getGrossArea() {
         return grossArea;
     }
 
-    public void setGrossArea(Double grossArea) {
+    public void setGrossArea(BigDecimal grossArea) {
         this.grossArea = grossArea;
     }
 
-    public Double getCarpetArea() {
+    public BigDecimal getCarpetArea() {
         return carpetArea;
     }
 
-    public void setCarpetArea(Double carpetArea) {
+    public void setCarpetArea(BigDecimal carpetArea) {
         this.carpetArea = carpetArea;
     }
 
-    public Double getCoefficient() {
+    public BigDecimal getCoefficient() {
         return coefficient;
     }
 
-    public void setCoefficient(Double coefficient) {
+    public void setCoefficient(BigDecimal coefficient) {
         this.coefficient = coefficient;
     }
 

@@ -40,7 +40,7 @@ public class ApartmentImportResult {
     public static ApartmentImportResult validationError(int totalRows, int errorRows, List<ApartmentRowError> errors) {
         return new ApartmentImportResult(
                 false,
-                "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại các dòng bị lỗi.",
+                "Invalid data. Please double-check the faulty lines.",
                 totalRows,
                 errorRows,
                 errors
@@ -50,7 +50,7 @@ public class ApartmentImportResult {
     public static ApartmentImportResult buildingNotFound(List<String> errors) {
         ApartmentImportResult result = new ApartmentImportResult();
         result.setSuccess(false);
-        result.setMessage("Building không tồn tại");
+        result.setMessage("Building not found. Please ensure the building exists before importing apartments.");
         result.setErrors(null);
         return result;
     }
@@ -58,7 +58,7 @@ public class ApartmentImportResult {
     public static ApartmentImportResult databaseError(String message) {
         return new ApartmentImportResult(
                 false,
-                "Lỗi khi lưu dữ liệu vào database: " + message,
+                "Error saving data to the database: " + message,
                 null,
                 null,
                 null

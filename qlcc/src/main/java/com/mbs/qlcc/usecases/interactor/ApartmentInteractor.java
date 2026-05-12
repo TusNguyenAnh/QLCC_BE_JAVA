@@ -2,6 +2,7 @@ package com.mbs.qlcc.usecases.interactor;
 
 import com.mbs.qlcc.entities.Apartment.Apartment;
 import com.mbs.qlcc.entities.Apartment.IApartmentFactory;
+import com.mbs.qlcc.entities.Building.Building;
 import com.mbs.qlcc.usecases.exception.AppException;
 import com.mbs.qlcc.usecases.input.IApartmentInputBoundary;
 import com.mbs.qlcc.usecases.output.Building.IBuildingDsGateway;
@@ -13,6 +14,7 @@ import com.mbs.qlcc.usecases.response.Apartment.ApartmentResponse;
 import com.mbs.qlcc.usecases.response.PageResponse;
 import com.mbs.qlcc.utils.ErrorCode;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,6 +32,9 @@ public class ApartmentInteractor implements IApartmentInputBoundary {
     @Override
     public ApartmentResponse create(CreateApartmentInpRequest request) {
         // Validate: apartNumber unique per building
+        buildingDsGateway.findById(request.getBuildingId())
+                .orElseThrow(() -> new AppException(ErrorCode.BUILDING_NOT_FOUND));
+
         boolean isExited = apartmentGateway.existsByBuildingIdAndAptNumber(request.getBuildingId(), request.getAptNumber());
         if (isExited) {
             throw new AppException(ErrorCode.APT_NUMBER_EXISTED);
@@ -66,13 +71,13 @@ public class ApartmentInteractor implements IApartmentInputBoundary {
         result.removeAll(exitsBuilding.keySet());
 
         if (!result.isEmpty()) {
-            String error = "";
+            StringBuilder error = new StringBuilder();
             for (String bdName : result
             ) {
-                error = error + bdName + ", ";
+                error.append(bdName).append(", ");
             }
-            error = error + "không tồn tại!";
-            return error;
+            error.append("không tồn tại!");
+            return error.toString();
         }
 
         List<Apartment> apartments = new ArrayList<>();
@@ -90,6 +95,26 @@ public class ApartmentInteractor implements IApartmentInputBoundary {
                     crq.getDescription()
             );
             apartments.add(apartment);
+        }
+
+        // Validate: aptNumber unique per building
+        Map <String, List<String>> apartmentsByBuilding = apartments.stream()
+                .collect(Collectors.groupingBy(Apartment::getBuildingId, Collectors.mapping(Apartment::getAptNumber, Collectors.toList())));
+
+        for (Map.Entry<String, List<String>> entry : apartmentsByBuilding.entrySet()) {
+            String buildingId = entry.getKey();
+            List<String> aptNumbers = entry.getValue();
+
+            List<Apartment> existingApts = apartmentGateway.findByBuildingIdAndAptNumberIn(buildingId, aptNumbers);
+            if (!existingApts.isEmpty()) {
+                StringBuilder error = new StringBuilder();
+                error.append("Trong tòa nhà ").append(buildingId).append(", các căn hộ sau đã tồn tại: ");
+                for (Apartment apt : existingApts
+                ) {
+                    error.append(apt.getAptNumber()).append(", ");
+                }
+                return error.toString();
+            }
         }
 
         apartmentGateway.importExcel(apartments);
@@ -163,7 +188,7 @@ public class ApartmentInteractor implements IApartmentInputBoundary {
         }
 
         // Calculate carpet_area
-        Double carpetArea = request.getGrossArea() * request.getCoefficient();
+        BigDecimal carpetArea = request.getGrossArea().multiply(request.getCoefficient());
 
         // Update fields
         apartment.setFloor(request.getFloor());
@@ -192,7 +217,8 @@ public class ApartmentInteractor implements IApartmentInputBoundary {
                 apartment.getCarpetArea(),
                 apartment.getCoefficient(),
                 apartment.getAptType(),
-                apartment.getDescription()
+                apartment.getDescription(),
+                apartment.getStatus()
         );
     }
 }

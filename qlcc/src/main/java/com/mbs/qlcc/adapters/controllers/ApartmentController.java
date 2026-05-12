@@ -9,7 +9,10 @@ import com.mbs.qlcc.adapters.response.ApiResponse;
 import com.mbs.qlcc.adapters.services.ApartmentService;
 import com.mbs.qlcc.usecases.response.Apartment.ApartmentResponse;
 import com.mbs.qlcc.usecases.response.PageResponse;
+import com.mbs.qlcc.utils.JwtUtil;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,17 +20,15 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/v1/apartments")
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ApartmentController {
-
-    private final ApartmentService apartmentService;
-    private final ApartmentImportService importService;
+    ApartmentService apartmentService;
+    ApartmentImportService importService;
 
     @PostMapping("")
     public ApiResponse<ApartmentResponse> create(
             @RequestBody CreateApartmentRequest request) {
-
-
-        String complexId = getCurrentComplexId(); // TODO: Get from security context
+        String complexId = getCurrentComplexId();
 
         ApartmentResponse response = apartmentService.create(request, complexId);
         return ApiResponse.<ApartmentResponse>builder()
@@ -94,7 +95,7 @@ public class ApartmentController {
 
     @PostMapping(value = "/import-excel", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<ApartmentImportResult> importFromExcel(
-            @RequestParam("file") MultipartFile file) {
+            @RequestParam("files") MultipartFile file) {
 
         String complexId = getCurrentComplexId();
         ApartmentImportResult result = importService.importFromExcel(file, complexId);
@@ -105,8 +106,6 @@ public class ApartmentController {
     }
 
     private String getCurrentComplexId() {
-        // This should be retrieved from JWT token
-        // For now, returning placeholder
-        return "complex-id-from-jwt";
+        return JwtUtil.getClaim(JwtUtil.getToken()).get("complex_id").toString();
     }
 }

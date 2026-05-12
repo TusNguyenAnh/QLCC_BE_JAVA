@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -107,7 +108,7 @@ public class ApartmentImportService {
             importRow.setFloor(floor);
 
             // Column D: Gross Area
-            Double grossArea = getDoubleCellValue(row, 4);
+            BigDecimal grossArea = getDoubleCellValue(row, 4);
             importRow.setGrossArea(grossArea);
 
             // Column E: Apartment Type
@@ -120,10 +121,10 @@ public class ApartmentImportService {
 
             // Default coefficient (typically 1.0 from spreadsheet or calculate from data)
             // For now, assume coefficient is provided or default to 1.0
-            importRow.setCoefficient(1.0);
+            importRow.setCoefficient(BigDecimal.valueOf(1.0));
 
         } catch (Exception e) {
-            importRow.setErrors(Arrays.asList("Lỗi khi đọc dòng: " + e.getMessage()));
+            importRow.setErrors(List.of("Lỗi khi đọc dòng: " + e.getMessage()));
         }
 
         return importRow;
@@ -145,7 +146,7 @@ public class ApartmentImportService {
             errors.add("Số tầng phải lớn hơn 0");
         }
 
-        if (row.getGrossArea() == null || row.getGrossArea() <= 0) {
+        if (row.getGrossArea() == null || row.getGrossArea().compareTo(BigDecimal.ZERO) <= 0) {
             errors.add("Diện tích phải lớn hơn 0");
         }
 
@@ -173,11 +174,11 @@ public class ApartmentImportService {
         }
     }
 
-    private Double getDoubleCellValue(Row row, int columnIndex) {
+    private BigDecimal getDoubleCellValue(Row row, int columnIndex) {
         try {
-            return row.getCell(columnIndex).getNumericCellValue();
+            return BigDecimal.valueOf(row.getCell(columnIndex).getNumericCellValue());
         } catch (Exception e) {
-            return 0.0;
+            return BigDecimal.valueOf(0.0);
         }
     }
 }
