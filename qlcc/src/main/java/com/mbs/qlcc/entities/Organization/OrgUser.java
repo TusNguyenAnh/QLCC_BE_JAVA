@@ -1,6 +1,7 @@
 package com.mbs.qlcc.entities.Organization;
 
 public class OrgUser {
+    private String id;
     private String user_id;
     private String org_id;
     private String role_id;
@@ -36,5 +37,13 @@ public class OrgUser {
 
     public void setRole_id(String role_id) {
         this.role_id = role_id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

@@ -2,10 +2,14 @@ package com.mbs.qlcc.usecases.interactor;
 
 import com.mbs.qlcc.entities.Complex.Complex;
 import com.mbs.qlcc.entities.Complex.IComplexFactory;
+import com.mbs.qlcc.entities.Organization.OrgUser;
+import com.mbs.qlcc.entities.User.User;
 import com.mbs.qlcc.usecases.exception.AppException;
 import com.mbs.qlcc.usecases.input.IComplexInputBoundary;
 import com.mbs.qlcc.usecases.output.Complex.IComplexDsGateway;
 import com.mbs.qlcc.usecases.output.Email.IEmailDsGateway;
+import com.mbs.qlcc.usecases.output.Organization.IOrgUserDsGateway;
+import com.mbs.qlcc.usecases.output.Role.IRoleDsGateway;
 import com.mbs.qlcc.usecases.output.User.ITokenDsGateway;
 import com.mbs.qlcc.usecases.output.User.IUserDsGateway;
 import com.mbs.qlcc.usecases.request.Complex.ApproveRejectComplexInpRequest;
@@ -16,19 +20,11 @@ import com.mbs.qlcc.usecases.response.Complex.ComplexResponse;
 import com.mbs.qlcc.usecases.response.PageResponse;
 import com.mbs.qlcc.utils.Constant;
 import com.mbs.qlcc.utils.ErrorCode;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Complex Interactor - Implements Complex Use Cases
- * Contains all business logic for Complex operations
- */
 public class ComplexInteractor implements IComplexInputBoundary {
 
     IComplexDsGateway complexGateway;
@@ -36,14 +32,19 @@ public class ComplexInteractor implements IComplexInputBoundary {
     IEmailDsGateway emailDsGateway;
     IUserDsGateway userDsGateway;
     ITokenDsGateway tokenDsGateway;
+    IRoleDsGateway roleDsGateway;
+    IOrgUserDsGateway orgUserDsGateway;
 
-
-    public ComplexInteractor(IComplexDsGateway complexGateway, IComplexFactory complexFactory, IEmailDsGateway emailDsGateway, IUserDsGateway userDsGateway, ITokenDsGateway tokenDsGateway) {
+    public ComplexInteractor(IComplexDsGateway complexGateway, IComplexFactory complexFactory, IEmailDsGateway emailDsGateway,
+                              IUserDsGateway userDsGateway, ITokenDsGateway tokenDsGateway, IRoleDsGateway roleDsGateway,
+                              IOrgUserDsGateway orgUserDsGateway) {
         this.complexGateway = complexGateway;
         this.complexFactory = complexFactory;
         this.emailDsGateway = emailDsGateway;
         this.userDsGateway = userDsGateway;
         this.tokenDsGateway = tokenDsGateway;
+        this.roleDsGateway = roleDsGateway;
+        this.orgUserDsGateway = orgUserDsGateway;
     }
 
     @Override
@@ -112,13 +113,18 @@ public class ComplexInteractor implements IComplexInputBoundary {
         }
 
         List<Complex> approved = complexGateway.updateMultipleStatusToApproved(request.getIds());
+
+        String roleAdminId = roleDsGateway.findByRoleName(Constant.ROLE_ADMIN.getValue(), "").getId();
+
         try {
             for (Complex c : approved) {
                 //tao user
                 String passwordRaw = "1"; //userDsGateway.generatePassword();
                 UserInpRequest userInpRequest = new UserInpRequest(c.getPhoneContact(), tokenDsGateway.hash(passwordRaw), c.getId(), "", "");
-                userDsGateway.store(userInpRequest);
+                User user =userDsGateway.store(userInpRequest);
                 //gan role cho acc
+                OrgUser orgUser = new OrgUser(user.getId(),"",roleAdminId);
+                orgUserDsGateway.saveOrgUser(List.of(orgUser));
                 //gui mail
                 emailDsGateway.sendMail(c.getEmailContact(), Constant.SUBJECT.getValue(), Constant.SYSTEM_NAME.getValue(),
                         c.getNameContact(), c.getPhoneContact(), passwordRaw);
@@ -139,9 +145,6 @@ public class ComplexInteractor implements IComplexInputBoundary {
         complexGateway.updateMultipleStatusToRejected(request.getIds());
     }
 
-    /**
-     * Map Complex entity to response DTO
-     */
     private ComplexResponse mapToResponse(Complex complex) {
         return new ComplexResponse(
                 complex.getId(),

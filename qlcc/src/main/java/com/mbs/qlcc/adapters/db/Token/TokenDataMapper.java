@@ -21,14 +21,14 @@ public class TokenDataMapper {
     @Column(name = "id")
     String id;
 
-    @Column(name = "token", nullable = false,length = 300)
+    @Column(name = "token", nullable = false,length = 1000)
     String token;
 
     @Column()
     //@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
     Date expirationDate;
 
-    @Column(name = "refresh_token", nullable = false, length = 300)
+    @Column(name = "refresh_token", nullable = false, length = 1000)
     String refreshToken;
 
     @Column(name = "refresh_expiration_token")

@@ -4,8 +4,6 @@ import com.mbs.qlcc.adapters.services.AuthenticationService;
 import com.mbs.qlcc.usecases.exception.AppException;
 import com.mbs.qlcc.usecases.request.Authentication.IntrospectTokenInpRequest;
 import com.mbs.qlcc.utils.ErrorCode;
-import com.nimbusds.jose.JOSEException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -15,15 +13,18 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
-import java.text.ParseException;
 import java.util.Objects;
 
 @Component
 public class CustomJwtDecoder implements JwtDecoder {
     @Value("${jwt.signerKey}")
     private String SIGNER_KEY;
-    AuthenticationService authenticationService;
+    private final AuthenticationService authenticationService;
     private NimbusJwtDecoder nimbusJwtDecoder = null;
+
+    public CustomJwtDecoder(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
 
     @Override
     public Jwt decode(String token) throws JwtException {

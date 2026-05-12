@@ -2,15 +2,14 @@ package com.mbs.qlcc.usecases.response.User;
 
 public class UserResponse {
     private String username;
-    private String res_id;
+    private String resId;
+    private String complexId;
     private boolean status;
 
-    public UserResponse() {
-    }
-
-    public UserResponse(String username, String res_id, boolean status) {
+    public UserResponse(String username, String resId, String complexId, boolean status) {
         this.username = username;
-        this.res_id = res_id;
+        this.resId = resId;
+        this.complexId = complexId;
         this.status = status;
     }
 
@@ -22,12 +21,20 @@ public class UserResponse {
         this.username = username;
     }
 
-    public String getRes_id() {
-        return res_id;
+    public String getResId() {
+        return resId;
     }
 
-    public void setRes_id(String res_id) {
-        this.res_id = res_id;
+    public void setResId(String resId) {
+        this.resId = resId;
+    }
+
+    public String getComplexId() {
+        return complexId;
+    }
+
+    public void setComplexId(String complexId) {
+        this.complexId = complexId;
     }
 
     public boolean isStatus() {

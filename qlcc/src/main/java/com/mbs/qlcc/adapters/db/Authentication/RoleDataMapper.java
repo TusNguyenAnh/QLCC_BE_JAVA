@@ -24,8 +24,8 @@ public class RoleDataMapper {
     private String complexId;
     @Column(name = "description")
     private String description;
-    @Column
-    private boolean status;
+    @Column()
+    private boolean status = false;
     @Column(name = "created_at")
     //@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
     LocalDateTime createdAt;

@@ -1,7 +1,6 @@
 package com.mbs.qlcc.infrastructures.config;
 
-import com.mbs.qlcc.adapters.db.Authentication.JpaRolePermission;
-import com.mbs.qlcc.adapters.db.Authentication.JpaRolePermissionRepository;
+import com.mbs.qlcc.adapters.db.Authentication.*;
 import com.mbs.qlcc.adapters.db.Apartment.JpaApartment;
 import com.mbs.qlcc.adapters.db.Apartment.JpaApartmentRepository;
 import com.mbs.qlcc.adapters.db.Building.JpaBuilding;
@@ -11,6 +10,10 @@ import com.mbs.qlcc.adapters.db.Complex.JpaComplexRepository;
 import com.mbs.qlcc.adapters.db.MediaFile.JpaMediaFile;
 import com.mbs.qlcc.adapters.db.MediaFile.JpaMediaFileRepository;
 import com.mbs.qlcc.adapters.db.Organization.*;
+import com.mbs.qlcc.adapters.db.Resident.JpaResident;
+import com.mbs.qlcc.adapters.db.Resident.JpaResidentRepository;
+import com.mbs.qlcc.adapters.db.Resident.JpaAptResident;
+import com.mbs.qlcc.adapters.db.Resident.JpaAptResidentRepository;
 import com.mbs.qlcc.adapters.db.Token.JpaToken;
 import com.mbs.qlcc.adapters.db.Token.JpaTokenRepository;
 import com.mbs.qlcc.adapters.db.User.JpaUser;
@@ -18,6 +21,7 @@ import com.mbs.qlcc.adapters.db.User.JpaUserRepository;
 import com.mbs.qlcc.adapters.services.EmailService;
 import com.mbs.qlcc.entities.Apartment.ApartmentFactory;
 import com.mbs.qlcc.entities.Apartment.IApartmentFactory;
+import com.mbs.qlcc.entities.Authentication.*;
 import com.mbs.qlcc.entities.Building.BuildingFactory;
 import com.mbs.qlcc.entities.Building.IBuildingFactory;
 import com.mbs.qlcc.entities.Complex.ComplexFactory;
@@ -26,11 +30,16 @@ import com.mbs.qlcc.entities.MediaFile.IMediaFileFactory;
 import com.mbs.qlcc.entities.MediaFile.MediaFileFactory;
 import com.mbs.qlcc.entities.Organization.IOrganizationFactory;
 import com.mbs.qlcc.entities.Organization.OrganizationFactory;
+import com.mbs.qlcc.entities.Resident.IResidentFactory;
+import com.mbs.qlcc.entities.Resident.ResidentFactory;
+import com.mbs.qlcc.entities.Resident.IAptResidentFactory;
+import com.mbs.qlcc.entities.Resident.AptResidentFactory;
 import com.mbs.qlcc.entities.User.IUserFactory;
 import com.mbs.qlcc.entities.User.UserFactory;
 import com.mbs.qlcc.usecases.input.*;
 import com.mbs.qlcc.usecases.interactor.*;
 import com.mbs.qlcc.usecases.output.Apartment.IApartmentDsGateway;
+import com.mbs.qlcc.usecases.output.Authentication.IPermissionDsGateway;
 import com.mbs.qlcc.usecases.output.Authentication.IRolePermissionDsGateway;
 import com.mbs.qlcc.usecases.output.Building.IBuildingDsGateway;
 import com.mbs.qlcc.usecases.output.Complex.IComplexDsGateway;
@@ -39,6 +48,9 @@ import com.mbs.qlcc.usecases.output.MediaFile.IMediaFileDsGateway;
 import com.mbs.qlcc.usecases.output.Organization.IOrgBuildingDsGateway;
 import com.mbs.qlcc.usecases.output.Organization.IOrgUserDsGateway;
 import com.mbs.qlcc.usecases.output.Organization.IOrganizationDsGateway;
+import com.mbs.qlcc.usecases.output.Resident.IResidentDsGateway;
+import com.mbs.qlcc.usecases.output.Resident.IAptResidentDsGateway;
+import com.mbs.qlcc.usecases.output.Role.IRoleDsGateway;
 import com.mbs.qlcc.usecases.output.User.ITokenDsGateway;
 import com.mbs.qlcc.usecases.output.User.IUserDsGateway;
 import lombok.experimental.NonFinal;
@@ -89,6 +101,10 @@ public class QlccConfig {
         return new JpaComplex(repository);
     }
 
+    public IRoleDsGateway roleDsGateway(JpaRoleRepository repository) {
+        return new JpaRole(repository);
+    }
+
     @Bean
     public IComplexFactory complexFactory() {
         return new ComplexFactory();
@@ -96,9 +112,9 @@ public class QlccConfig {
 
     @Bean
     public IComplexInputBoundary complexInputBoundary(IComplexDsGateway complexDsGateway, IComplexFactory complexFactory, IEmailDsGateway emailDsGateway, IUserDsGateway userDsGateway,
-                                                      ITokenDsGateway tokenDsGateway
+                                                      ITokenDsGateway tokenDsGateway, IRoleDsGateway roleDsGateway, IOrgUserDsGateway orgUserDsGateway
     ) {
-        return new ComplexInteractor(complexDsGateway, complexFactory, emailDsGateway, userDsGateway, tokenDsGateway);
+        return new ComplexInteractor(complexDsGateway, complexFactory, emailDsGateway, userDsGateway, tokenDsGateway, roleDsGateway, orgUserDsGateway);
     }
 
     @Bean
@@ -112,8 +128,8 @@ public class QlccConfig {
     }
 
     @Bean
-    public ITokenDsGateway tokenDsGateway(JpaTokenRepository repository, PasswordEncoder passwordEncoder) {
-        return new JpaToken(repository, passwordEncoder);
+    public ITokenDsGateway tokenDsGateway(JpaTokenRepository repository, JpaUserRepository jpaUserRepository, PasswordEncoder passwordEncoder) {
+        return new JpaToken(repository, jpaUserRepository, passwordEncoder);
     }
 
     @Bean
@@ -125,6 +141,42 @@ public class QlccConfig {
     public IRolePermissionDsGateway rolePermissionDsGateway(JpaRolePermissionRepository repository) {
         return new JpaRolePermission(repository);
     }
+
+    @Bean
+    public IPermissionDsGateway permissionDsGateway(JpaPermissionRepository repository) {
+        return new JpaPermission(repository);
+    }
+
+    @Bean
+    public IRoleFactory roleFactory() {
+        return new RoleFactory();
+    }
+
+    @Bean
+    public IRoleInputBoundary roleInputBoundary(
+            IRoleDsGateway roleDsGateway, IOrgUserDsGateway orgUserDsGateway, IRoleFactory roleFactory
+    ) {
+        return new RoleInteractor(roleDsGateway, orgUserDsGateway, roleFactory);
+    }
+
+    @Bean
+    public IPermissionFactory permissionFactory() {
+        return new PermissionFactory();
+    }
+
+    @Bean
+    public IRolePermissionFactory rolePermissionFactory() {
+        return new RolePermissionFactory();
+    }
+
+    @Bean
+    public IPermissionInputBoundary permissionInputBoundary(
+            IPermissionFactory permissionFactory, IPermissionDsGateway permissionDsGateway,
+            IRolePermissionFactory rolePermissionFactory, IRolePermissionDsGateway rolePermissionDsGateway
+    ) {
+        return new PermissionInteractor(permissionFactory, permissionDsGateway, rolePermissionFactory, rolePermissionDsGateway);
+    }
+
 
     @Bean
     public IUserFactory userFactory() {
@@ -225,5 +277,39 @@ public class QlccConfig {
             IApartmentFactory apartmentFactory
     ) {
         return new ApartmentInteractor(apartmentDsGateway, buildingDsGateway, apartmentFactory);
+    }
+
+    // Resident Configuration
+    @Bean
+    public IResidentDsGateway residentDsGateway(JpaResidentRepository repository) {
+        return new JpaResident(repository);
+    }
+
+    @Bean
+    public IAptResidentDsGateway aptResidentDsGateway(JpaAptResidentRepository repository, JpaApartmentRepository apartmentRepository, JpaResidentRepository residentRepository) {
+        return new JpaAptResident(repository, apartmentRepository, residentRepository);
+    }
+
+    @Bean
+    public IResidentFactory residentFactory() {
+        return new ResidentFactory();
+    }
+
+    @Bean
+    public IAptResidentFactory aptResidentFactory() {
+        return new AptResidentFactory();
+    }
+
+    @Bean
+    public IResidentInputBoundary residentInputBoundary(
+            IResidentDsGateway residentDsGateway, IAptResidentDsGateway aptResidentDsGateway,
+            IBuildingDsGateway buildingDsGateway, IApartmentDsGateway apartmentDsGateway,
+            IOrgUserDsGateway orgUserDsGateway, IResidentFactory residentFactory, IAptResidentFactory aptResidentFactory
+    ) {
+        return new ResidentInteractor(
+                residentDsGateway, aptResidentDsGateway,
+                buildingDsGateway, apartmentDsGateway,
+                orgUserDsGateway, residentFactory, aptResidentFactory
+        );
     }
 }

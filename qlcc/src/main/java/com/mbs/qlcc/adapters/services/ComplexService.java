@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -48,16 +49,11 @@ public class ComplexService {
         return complexResponse;
     }
 
-    /**
-     * Find complex by ID
-     */
     public ComplexResponse findById(String id) {
         return useCase.findById(id);
     }
 
-    /**
-     * Filter complexes by status
-     */
+    @PreAuthorize("hasAuthority('manage:complex')")
     public PageResponse<ComplexResponse> filterByStatus(int status, FilterComplexRequest request) {
         FilterComplexInpRequest inpRequest = new FilterComplexInpRequest(
                 request.getKeyword(),

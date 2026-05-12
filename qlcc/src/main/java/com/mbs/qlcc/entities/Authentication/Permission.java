@@ -1,6 +1,7 @@
 package com.mbs.qlcc.entities.Authentication;
 
 public class Permission {
+    private String id;
     private String name;
     private String module;
     private String description;
@@ -8,10 +9,26 @@ public class Permission {
     public Permission() {
     }
 
+
     public Permission(String name, String module, String description) {
         this.name = name;
         this.module = module;
         this.description = description;
+    }
+
+    public Permission(String id, String name, String module, String description) {
+        this.id = id;
+        this.name = name;
+        this.module = module;
+        this.description = description;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {

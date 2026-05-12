@@ -3,6 +3,7 @@ package com.mbs.qlcc.entities.User;
 import java.util.Date;
 
 public class Token {
+    String id;
     String token;
     Date expirationDate;
     String refreshToken;
@@ -20,6 +21,24 @@ public class Token {
         this.refreshExpirationDate = refreshExpirationDate;
         this.revoked = revoked;
         this.expired = expired;
+    }
+
+    public Token(String id, String token, Date expirationDate, String refreshToken, Date refreshExpirationDate, boolean revoked, boolean expired) {
+        this.id = id;
+        this.token = token;
+        this.expirationDate = expirationDate;
+        this.refreshToken = refreshToken;
+        this.refreshExpirationDate = refreshExpirationDate;
+        this.revoked = revoked;
+        this.expired = expired;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getToken() {

@@ -9,7 +9,7 @@ public interface IUserDsGateway {
     User findById(String id);
     User findByUsernameAndComplexId(String username, String complexId);
     void storeList(List<UserInpRequest> userInpRequests);
-    void store(UserInpRequest userInpRequests);
+    User store(UserInpRequest userInpRequests);
     String generatePassword();
 
 //    UserResponse  update(String id, array String data);

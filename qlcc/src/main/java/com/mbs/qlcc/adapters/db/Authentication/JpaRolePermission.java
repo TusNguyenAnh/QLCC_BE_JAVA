@@ -1,10 +1,7 @@
 package com.mbs.qlcc.adapters.db.Authentication;
 
-import com.mbs.qlcc.adapters.db.Organization.JpaOrgUserRepository;
-import com.mbs.qlcc.adapters.db.Organization.OrgUserDataMapper;
 import com.mbs.qlcc.entities.Authentication.Permission;
 import com.mbs.qlcc.entities.Authentication.RolePermission;
-import com.mbs.qlcc.entities.Organization.OrgUser;
 import com.mbs.qlcc.usecases.output.Authentication.IRolePermissionDsGateway;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -26,4 +23,26 @@ public class JpaRolePermission implements IRolePermissionDsGateway {
                 .map(p -> new Permission(p.getName(), p.getModule(), p.getDescription()))
                 .toList();
     }
+
+    @Override
+    public void saveAll(List<RolePermission> rolePermissions) {
+        var listRolePermissionDataMappers = rolePermissions.stream()
+                .map(this::mapToDataMapper)
+                .toList();
+        repository.saveAll(listRolePermissionDataMappers);
+    }
+
+    @Override
+    public void deleteByRoleId(String roleId) {
+        repository.deleteWithRoleId(roleId);
+    }
+
+    private RolePermissionDataMapper mapToDataMapper(RolePermission rolePermission) {
+        RolePermissionDataMapper dataMapper = new RolePermissionDataMapper();
+        dataMapper.setPermissionDataMapper(PermissionDataMapper.builder().id(rolePermission.getPermissionId()).build());
+        dataMapper.setRoleDataMapper(RoleDataMapper.builder().id(rolePermission.getRoleId()).build());
+        return dataMapper;
+    }
+
+
 }

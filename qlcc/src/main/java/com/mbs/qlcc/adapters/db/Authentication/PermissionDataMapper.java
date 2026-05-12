@@ -35,4 +35,6 @@ public class PermissionDataMapper {
 
     @Column(name = "is_deleted")
     boolean isDeleted = false;
+
+
 }

@@ -3,6 +3,9 @@ package com.mbs.qlcc.adapters.controllers;
 import com.mbs.qlcc.adapters.request.User.UserRequest;
 import com.mbs.qlcc.adapters.services.UserService;
 import com.mbs.qlcc.usecases.request.User.UserInpRequest;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,8 +16,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserController {
-    @Autowired
     UserService service;
 
     @PostMapping("/create")

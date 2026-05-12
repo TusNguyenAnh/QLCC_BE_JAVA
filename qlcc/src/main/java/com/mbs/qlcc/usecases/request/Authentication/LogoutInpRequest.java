@@ -1,5 +1,6 @@
 package com.mbs.qlcc.usecases.request.Authentication;
 
+
 public class LogoutInpRequest {
     String token;
 

@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface IRolePermissionDsGateway {
     List<Permission> findPermissionByRoleId(String roleId);
+    void saveAll(List<RolePermission> rolePermissions);
+    void deleteByRoleId(String roleId);
 }

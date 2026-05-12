@@ -1,5 +1,12 @@
 package com.mbs.qlcc.adapters.db.Token;
 
+import com.mbs.qlcc.adapters.db.Apartment.ApartmentDataMapper;
+import com.mbs.qlcc.adapters.db.User.JpaUser;
+import com.mbs.qlcc.adapters.db.User.JpaUserRepository;
+import com.mbs.qlcc.adapters.db.User.UserDataMapper;
+import com.mbs.qlcc.entities.Apartment.Apartment;
+import com.mbs.qlcc.entities.User.Token;
+import com.mbs.qlcc.entities.User.User;
 import com.mbs.qlcc.usecases.exception.AppException;
 import com.mbs.qlcc.usecases.output.User.ITokenDsGateway;
 import com.mbs.qlcc.usecases.request.Authentication.IntrospectTokenInpRequest;
@@ -22,6 +29,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -42,24 +50,19 @@ public class JpaToken implements ITokenDsGateway {
     protected long REFRESHABLE_DURATION;
 
     final JpaTokenRepository repository;
+    final JpaUserRepository userRepository;
     final PasswordEncoder encoder;
 
     @Override
-    public TokenResponse findByRefreshToken(String refreshToken) {
+    public Token findByRefreshToken(String refreshToken) {
         var token = repository.findByRefreshToken(refreshToken);
-        TokenResponse tokenRefreshResponse = new TokenResponse(token.token, token.expirationDate, token.refreshToken,
-                token.refreshExpirationDate, token.revoked, token.expired
-        );
-        return tokenRefreshResponse;
+        return mapToEntity(token);
     }
 
     @Override
-    public TokenResponse findByToken(String token) {
+    public Token findByToken(String token) {
         var tokenRes = repository.findByToken(token);
-        TokenResponse tokenResponse = new TokenResponse(tokenRes.token, tokenRes.expirationDate, tokenRes.refreshToken,
-                tokenRes.refreshExpirationDate, tokenRes.revoked, tokenRes.expired
-        );
-        return tokenResponse;
+        return mapToEntity(tokenRes);
     }
 
     @Override
@@ -68,9 +71,6 @@ public class JpaToken implements ITokenDsGateway {
         boolean isValid = true;
         try {
             verifyToken(token, false); // kiem tra token hop le hay k va false=> de lay expiry cua token
-        } catch (JOSEException | ParseException e) {
-            isValid = false;
-            throw new RuntimeException(e);
         } catch (AppException e) {
             isValid = false;
             throw e;
@@ -92,7 +92,7 @@ public class JpaToken implements ITokenDsGateway {
 
     //type 0: access token; type 1: refresh token
     @Override
-    public String generateAccessToken(Map<String, String> claims, List<String> permissions, int type) {
+    public String generateToken(Map<String, String> claims, List<String> permissions, int type) {
         JWSHeader jwsHeader = new JWSHeader(JWSAlgorithm.HS512);
 
         var expirationTime = type == 0 ? VALID_DURATION : REFRESHABLE_DURATION;
@@ -103,6 +103,8 @@ public class JpaToken implements ITokenDsGateway {
                 .issueTime(new Date())
                 .expirationTime(new Date(Instant.now().plus(expirationTime, ChronoUnit.SECONDS).toEpochMilli()))
                 .jwtID(UUID.randomUUID().toString())
+                .claim("complex_id", claims.get("complex_id"))
+                .claim("org_id", claims.get("org_id"))
                 .claim("scope", buildScope(permissions))
                 .build();
 
@@ -118,25 +120,63 @@ public class JpaToken implements ITokenDsGateway {
         }
     }
 
-    private TokenDataMapper verifyToken(String token, boolean typeToken) throws JOSEException, ParseException, AppException {
-        //tao khoa chua chữ ký của token.
-        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
-        //Phân tích chuỗi token thành đối tượng SignedJWT để có thể truy cập các thuộc tính của nó
-        SignedJWT signedJWT = SignedJWT.parse(token);
+    public Token verifyToken(String token, boolean typeToken) throws AppException {
+        try {
+            //tao khoa chua chữ ký của token.
+            JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
+            //Phân tích chuỗi token thành đối tượng SignedJWT để có thể truy cập các thuộc tính của nó
+            SignedJWT signedJWT = SignedJWT.parse(token);
 
-        Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
-        // xac minh chu ki
-        var verified = signedJWT.verify(verifier);
-        var existingToken = !typeToken ? repository.findByToken(token) : repository.findByRefreshToken(token);
-        // chu ki k hop le hoac het han token
-        // kien tra su ton tai cua token trong db vi token co the hop le nhung k con luu trong db
+            Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+            // xac minh chu ki
+            var verified = signedJWT.verify(verifier);
+            var existingToken = !typeToken ? repository.findByToken(token) : repository.findByRefreshToken(token);
+            // chu ki k hop le hoac het han token
+            // kien tra su ton tai cua token trong db vi token co the hop le nhung k con luu trong db
 //        if (!(verified && expiryTime.after(new Date()) && existingToken !=null)) throw new AppException(ErrorCode.UNAUTHENTICATED);
-        if (!verified || existingToken == null) throw new AppException(ErrorCode.TOKEN_INVALID);
-        if (expiryTime.before(new Date())) throw new AppException(ErrorCode.TOKEN_EXPIRED);
+            if (!verified || existingToken == null) throw new AppException(ErrorCode.TOKEN_INVALID);
+            if (expiryTime.before(new Date())) throw new AppException(ErrorCode.TOKEN_EXPIRED);
 
-        // co the coi la token dc convert sang thanh 1 obj
-        // token hop le con han se dc return
-        return existingToken;
+            // co the coi la token dc convert sang thanh 1 obj
+            // token hop le con han se dc return
+            return mapToEntity(existingToken);
+        } catch (JOSEException | ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Token addToken(User user, String token, String refreshToken) {
+        try {
+            SignedJWT signedJWT = SignedJWT.parse(token);
+            SignedJWT signedRefreshJWT = SignedJWT.parse(refreshToken);
+
+            Date expirationDate = signedJWT.getJWTClaimsSet().getExpirationTime();
+            Date expirationRefreshDate = signedRefreshJWT.getJWTClaimsSet().getExpirationTime();
+
+            // Tạo mới một token cho người dùng luu trong db
+            TokenDataMapper newToken = new TokenDataMapper();
+            newToken.setUser(userRepository.findById(user.getId()).orElseThrow(() -> new AppException(ErrorCode.USER_NON_EXISTED)));
+            newToken.setToken(token);
+            newToken.setRefreshToken(refreshToken);
+            newToken.setRevoked(false);
+            newToken.setExpired(false);
+            newToken.setExpirationDate(expirationDate);
+            newToken.setRefreshExpirationDate(expirationRefreshDate);
+
+            repository.save(newToken);
+            return mapToEntity(newToken);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public boolean revokeToken(String tokenId) {
+        TokenDataMapper token = repository.findById(tokenId).orElse(null);
+        if (token == null)
+            return false;
+        repository.delete(token);
+        return true;
     }
 
 
@@ -147,5 +187,17 @@ public class JpaToken implements ITokenDsGateway {
         return stringJoiner.toString();
     }
 
+
+    private Token mapToEntity(TokenDataMapper mapper) {
+        return new Token(
+                mapper.getId(),
+                mapper.getToken(),
+                mapper.getExpirationDate(),
+                mapper.getRefreshToken(),
+                mapper.getRefreshExpirationDate(),
+                mapper.isRevoked(),
+                mapper.isExpired()
+        );
+    }
 
 }

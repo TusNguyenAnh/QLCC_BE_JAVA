@@ -1,6 +1,7 @@
 package com.mbs.qlcc.usecases.response.Authentication;
 
 public class AuthenticationResponse {
+    String message;
     String accessToken;
     String refreshToken;
     boolean authenticated;
@@ -8,10 +9,19 @@ public class AuthenticationResponse {
     public AuthenticationResponse() {
     }
 
-    public AuthenticationResponse(String accessToken, String refreshToken, boolean authenticated) {
+    public AuthenticationResponse(String accessToken, String refreshToken, boolean authenticated, String message) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.authenticated = authenticated;
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public String getAccessToken() {
