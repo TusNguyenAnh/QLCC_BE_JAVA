@@ -18,11 +18,10 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/v1/complexes")
+@RequestMapping("/api/v1/complex")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ComplexController {
-
     ComplexService complexService;
 
     @PostMapping("")

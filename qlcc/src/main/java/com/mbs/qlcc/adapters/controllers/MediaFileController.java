@@ -7,7 +7,9 @@ import com.mbs.qlcc.usecases.exception.AppException;
 import com.mbs.qlcc.usecases.response.Organization.OrganizationResponse;
 import com.mbs.qlcc.usecases.response.PageResponse;
 import com.mbs.qlcc.utils.ErrorCode;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +22,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/image")
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MediaFileController {
-    private final MediaFileService mediaFileService;
+    MediaFileService mediaFileService;
 
     @GetMapping("/view")
     public ApiResponse<Map<String, List<String>>> viewImage(@RequestParam String ownerId) {

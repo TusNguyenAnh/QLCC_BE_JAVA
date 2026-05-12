@@ -82,6 +82,12 @@ public class BuildingInteractor implements IBuildingInputBoundary {
         Building building = buildingGateway.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.BUILDING_NOT_FOUND));
 
+        // check duplicate name if updating
+
+        boolean existingWithName = buildingGateway.existsByBuildingNameAndComplexId(request.getBuildingName(), building.getComplexId());
+        if (existingWithName)
+            throw new AppException(ErrorCode.BUILDING_NAME_EXISTS);
+
         // Check if updating building name - must be unique within complex
         if (request.getBuildingName() != null && !request.getBuildingName().equals(building.getBuildingName())) {
             building.setBuildingName(request.getBuildingName());

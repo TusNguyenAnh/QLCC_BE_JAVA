@@ -17,48 +17,52 @@ public interface JpaApartmentRepository extends JpaRepository<ApartmentDataMappe
         JpaSpecificationExecutor<ApartmentDataMapper> {
 
     // Existence checks
-    boolean existsByBuildingIdAndAptNumber(String buildingId, String aptNumber);
-    
+    boolean existsByBuildingDataMapper_IdAndAptNumber(String buildingId, String aptNumber);
+
+    List<ApartmentDataMapper> findByBuildingDataMapper_IdAndAptNumberIn(String buildingId, List<String> aptNumbers);
+
+    List<ApartmentDataMapper> findByBuildingDataMapper_IdIn(List<String> buildingId);
+
     // Find by specific field
     Optional<ApartmentDataMapper> findByIdAndDeletedAtIsNull(String id);
-    
-    Page<ApartmentDataMapper> findByBuildingIdAndDeletedAtIsNull(String buildingId, Pageable pageable);
-    
+
+    Page<ApartmentDataMapper> findByBuildingDataMapper_IdAndDeletedAtIsNull(String buildingId, Pageable pageable);
+
     // Filter by status
     Page<ApartmentDataMapper> findByStatusAndDeletedAtIsNull(int status, Pageable pageable);
-    
+
     // Find all by complex
     Page<ApartmentDataMapper> findByComplexIdAndDeletedAtIsNull(String complexId, Pageable pageable);
-    
+
     // Find all by building and complex
-    List<ApartmentDataMapper> findByBuildingIdAndComplexIdAndDeletedAtIsNull(String buildingId, String complexId);
-    
+    List<ApartmentDataMapper> findByBuildingDataMapper_IdAndComplexIdAndDeletedAtIsNull(String buildingId, String complexId);
+
     // Advanced keyword search
     @Query("SELECT a FROM ApartmentDataMapper a WHERE a.status = :status " +
-           "AND a.deletedAt IS NULL " +
-           "AND (CAST(a.floor AS string) LIKE %:keyword% " +
-           "OR a.aptNumber LIKE %:keyword% " +
-           "OR a.aptType LIKE %:keyword%)")
+            "AND a.deletedAt IS NULL " +
+            "AND (CAST(a.floor AS string) LIKE %:keyword% " +
+            "OR a.aptNumber LIKE %:keyword% " +
+            "OR a.aptType LIKE %:keyword%)")
     Page<ApartmentDataMapper> findByStatusAndKeyword(int status, String keyword, Pageable pageable);
-    
+
     // Date range filter
     @Query("SELECT a FROM ApartmentDataMapper a WHERE a.status = :status " +
-           "AND a.deletedAt IS NULL " +
-           "AND a.createdAt BETWEEN :startDate AND :endDate")
+            "AND a.deletedAt IS NULL " +
+            "AND a.createdAt BETWEEN :startDate AND :endDate")
     Page<ApartmentDataMapper> findByStatusAndCreatedDateRange(int status, LocalDateTime startDate,
                                                               LocalDateTime endDate, Pageable pageable);
-    
+
     // Keyword + Date range
     @Query("SELECT a FROM ApartmentDataMapper a WHERE a.status = :status " +
-           "AND a.deletedAt IS NULL " +
-           "AND (CAST(a.floor AS string) LIKE %:keyword% " +
-           "OR a.aptNumber LIKE %:keyword% " +
-           "OR a.aptType LIKE %:keyword%) " +
-           "AND a.createdAt BETWEEN :startDate AND :endDate")
+            "AND a.deletedAt IS NULL " +
+            "AND (CAST(a.floor AS string) LIKE %:keyword% " +
+            "OR a.aptNumber LIKE %:keyword% " +
+            "OR a.aptType LIKE %:keyword%) " +
+            "AND a.createdAt BETWEEN :startDate AND :endDate")
     Page<ApartmentDataMapper> findByStatusAndKeywordAndDateRange(int status, String keyword,
-                                                                  LocalDateTime startDate,
-                                                                  LocalDateTime endDate, Pageable pageable);
-    
+                                                                 LocalDateTime startDate,
+                                                                 LocalDateTime endDate, Pageable pageable);
+
     // For approval/rejection batch operations
     List<ApartmentDataMapper> findAllByStatusAndIdInAndDeletedAtIsNull(int status, List<String> ids);
 }

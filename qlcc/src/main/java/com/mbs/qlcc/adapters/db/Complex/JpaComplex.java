@@ -88,7 +88,7 @@ public class JpaComplex implements IComplexDsGateway {
                 : Sort.Direction.ASC;
 
         Pageable pageable = PageRequest.of(
-                filterComplexInpRequest.getPageNumber(),
+                filterComplexInpRequest.getPageNumber() - 1,
                 filterComplexInpRequest.getPageSize(),
                 direction,
                 "createdAt"

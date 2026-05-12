@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,8 +15,8 @@ public class CreateApartmentRequest {
     private String buildingId;
     private int floor;
     private String aptNumber;
-    private Double grossArea;
-    private Double coefficient;
+    private BigDecimal grossArea;
+    private BigDecimal coefficient;
     private String aptType;
     private String description;
 }

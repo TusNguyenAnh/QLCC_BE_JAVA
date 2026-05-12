@@ -1,5 +1,6 @@
 package com.mbs.qlcc.adapters.db.Building;
 
+import com.mbs.qlcc.adapters.db.Apartment.ApartmentDataMapper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "buildings", uniqueConstraints = {
@@ -44,4 +46,7 @@ public class BuildingDataMapper {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    @OneToMany(mappedBy = "buildingDataMapper")
+    private List<ApartmentDataMapper> apartments;
 }

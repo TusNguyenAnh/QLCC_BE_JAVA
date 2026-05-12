@@ -16,11 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * Organization Service - Adapter Layer
- * Bridges Controller and Usecase layers
- * Converts adapter DTOs to usecase DTOs
- */
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)

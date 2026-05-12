@@ -3,6 +3,7 @@ package com.mbs.qlcc.adapters.services;
 import com.mbs.qlcc.adapters.request.Building.CreateBuildingRequest;
 import com.mbs.qlcc.adapters.request.Building.UpdateBuildingRequest;
 import com.mbs.qlcc.adapters.request.Building.UpdateRatioRequest;
+import com.mbs.qlcc.usecases.exception.AppException;
 import com.mbs.qlcc.usecases.input.IBuildingInputBoundary;
 import com.mbs.qlcc.usecases.request.Building.CreateBuildingInpRequest;
 import com.mbs.qlcc.usecases.request.Building.UpdateBuildingInpRequest;
@@ -21,7 +22,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class BuildingService {
 

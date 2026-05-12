@@ -1,12 +1,14 @@
 package com.mbs.qlcc.usecases.request.Apartment;
 
+import java.math.BigDecimal;
+
 public class CreateApartmentInpRequest {
     private String buildingId;
     private String complexId;
     private int floor;
     private String aptNumber;
-    private Double grossArea;
-    private Double coefficient;
+    private BigDecimal grossArea;
+    private BigDecimal coefficient;
     private String aptType;
     private String description;
 
@@ -14,7 +16,7 @@ public class CreateApartmentInpRequest {
     }
 
     public CreateApartmentInpRequest(String buildingId, String complexId, int floor,
-                                     String aptNumber, Double grossArea, Double coefficient,
+                                     String aptNumber, BigDecimal grossArea, BigDecimal coefficient,
                                      String aptType, String description) {
         this.buildingId = buildingId;
         this.complexId = complexId;
@@ -58,19 +60,19 @@ public class CreateApartmentInpRequest {
         this.aptNumber = aptNumber;
     }
 
-    public Double getGrossArea() {
+    public BigDecimal getGrossArea() {
         return grossArea;
     }
 
-    public void setGrossArea(Double grossArea) {
+    public void setGrossArea(BigDecimal grossArea) {
         this.grossArea = grossArea;
     }
 
-    public Double getCoefficient() {
+    public BigDecimal getCoefficient() {
         return coefficient;
     }
 
-    public void setCoefficient(Double coefficient) {
+    public void setCoefficient(BigDecimal coefficient) {
         this.coefficient = coefficient;
     }
 

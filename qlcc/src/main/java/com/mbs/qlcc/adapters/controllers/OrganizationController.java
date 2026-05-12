@@ -7,7 +7,10 @@ import com.mbs.qlcc.adapters.services.OrganizationService;
 import com.mbs.qlcc.usecases.response.Organization.OrganizationResponse;
 import com.mbs.qlcc.usecases.response.Organization.OrganizationWithoutChildResponse;
 import com.mbs.qlcc.usecases.response.PageResponse;
+import com.mbs.qlcc.utils.JwtUtil;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,17 +19,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/organizations")
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class OrganizationController {
-
-    private final OrganizationService organizationService;
+    OrganizationService organizationService;
 
     @GetMapping
     public ApiResponse<PageResponse<OrganizationResponse>> index(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "50") int perPage,
-            @RequestParam String complexId) {
+            @RequestParam(defaultValue = "50") int perPage) {
 
-        // In production, extract complexId from JWT token
+        var complexId = getCurrentComplexId();
 
         return ApiResponse.<PageResponse<OrganizationResponse>>builder()
                 .result(organizationService.show(complexId, page, Math.min(perPage, 50)))
@@ -95,4 +97,9 @@ public class OrganizationController {
                 .result(organizationService.getAvailableBuildingIds(parentOrgId))
                 .build();
     }
+
+    private String getCurrentComplexId() {
+        return JwtUtil.getClaim(JwtUtil.getToken()).get("complex_id").toString();
+    }
+
 }

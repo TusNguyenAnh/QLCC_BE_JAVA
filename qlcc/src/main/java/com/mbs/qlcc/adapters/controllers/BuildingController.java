@@ -7,17 +7,20 @@ import com.mbs.qlcc.adapters.response.ApiResponse;
 import com.mbs.qlcc.adapters.services.BuildingService;
 import com.mbs.qlcc.usecases.response.Building.BuildingResponse;
 import com.mbs.qlcc.usecases.response.PageResponse;
+import com.mbs.qlcc.utils.JwtUtil;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/buildings")
+@RequestMapping("/api/v1/building")
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class BuildingController {
-
-    private final BuildingService buildingService;
+    BuildingService buildingService;
 
     @PostMapping
     public ApiResponse<BuildingResponse> create(
@@ -37,12 +40,12 @@ public class BuildingController {
                 .build();
     }
 
-    @GetMapping("/complex/{complexId}")
+    @GetMapping("")
     public ApiResponse<List<BuildingResponse>> findByComplexId(
-            @PathVariable String complexId
     ) {
+        String currentComplexId = getCurrentComplexId();
         return ApiResponse.<List<BuildingResponse>>builder()
-                .result(buildingService.findByComplexId(complexId))
+                .result(buildingService.findByComplexId(currentComplexId))
                 .build();
     }
 
@@ -88,7 +91,11 @@ public class BuildingController {
         buildingService.updateRatio(request);
 
         return ApiResponse.<String>builder()
-                .result("Cập nhật tỉ lệ thành công!")
+                .result("Update ratio successfully!")
                 .build();
+    }
+
+    private String getCurrentComplexId() {
+        return JwtUtil.getClaim(JwtUtil.getToken()).get("complex_id").toString();
     }
 }

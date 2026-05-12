@@ -138,13 +138,17 @@ public enum ErrorCode {
 
     // Resident Errors
     RESIDENT_EXISTED(7000, "Thông tin cư dân đã tồn tại!", HttpStatus.BAD_REQUEST),
-    RESIDENT_GENDER_NOT_EMPTY(7001, "Giới tính không được để trống", HttpStatus.BAD_REQUEST),
-    RESIDENT_FULLNAME_NOT_EMPTY(7002, "Họ tên không được để trống", HttpStatus.BAD_REQUEST),
-    RESIDENT_EMAIL_NOT_EMPTY(7003, "Email không được để trống", HttpStatus.BAD_REQUEST),
-    RESIDENT_BIRTHDAY_NOT_EMPTY(7004, "Ngày sinh không được để trống", HttpStatus.BAD_REQUEST),
-    RESIDENT_PHONE_NOT_EMPTY(7005, "Số điện thoại không được để trống", HttpStatus.BAD_REQUEST),
-    RESIDENT_RELATIONSHIP_NOT_EMPTY(7006, "Mối quan hệ không được để trống", HttpStatus.BAD_REQUEST),
-    RESIDENT_CCCD_NOT_EMPTY(7007, "Số CCCD không được để trống", HttpStatus.BAD_REQUEST),
+    RESIDENT_EMAIL_EXISTED(7001, "Email cư dân đã tồn tại trong chung cư này!", HttpStatus.BAD_REQUEST),
+    RESIDENT_PHONE_EXISTED(7002, "Số điện thoại cư dân đã tồn tại trong chung cư này!", HttpStatus.BAD_REQUEST),
+    RESIDENT_CCCD_EXISTED(7003, "Số CCCD cư dân đã tồn tại trong chung cư này!", HttpStatus.BAD_REQUEST),
+    RESIDENT_NOT_FOUND(7004, "Cư dân không tồn tại!", HttpStatus.NOT_FOUND),
+    RESIDENT_GENDER_NOT_EMPTY(7005, "Giới tính không được để trống", HttpStatus.BAD_REQUEST),
+    RESIDENT_FULLNAME_NOT_EMPTY(7006, "Họ tên không được để trống", HttpStatus.BAD_REQUEST),
+    RESIDENT_EMAIL_NOT_EMPTY(7007, "Email không được để trống", HttpStatus.BAD_REQUEST),
+    RESIDENT_BIRTHDAY_NOT_EMPTY(7008, "Ngày sinh không được để trống", HttpStatus.BAD_REQUEST),
+    RESIDENT_PHONE_NOT_EMPTY(7009, "Số điện thoại không được để trống", HttpStatus.BAD_REQUEST),
+    RESIDENT_RELATIONSHIP_NOT_EMPTY(7010, "Mối quan hệ không được để trống", HttpStatus.BAD_REQUEST),
+    RESIDENT_CCCD_NOT_EMPTY(7011, "Số CCCD không được để trống", HttpStatus.BAD_REQUEST),
 
 
     // Staff Errors
@@ -255,4 +259,4 @@ public enum ErrorCode {
     public void setMessage(String message) {
         this.message = message;
     }
-    }
+}

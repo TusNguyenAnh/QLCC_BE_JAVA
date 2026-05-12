@@ -4,11 +4,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
-
-/**
- * Update Organization Request DTO (Adapter Level)
- * Received from HTTP client
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
