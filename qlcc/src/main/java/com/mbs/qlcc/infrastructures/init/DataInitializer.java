@@ -1,10 +1,13 @@
 package com.mbs.qlcc.infrastructures.init;
 
 import com.mbs.qlcc.adapters.db.Authentication.*;
+import com.mbs.qlcc.adapters.db.FinancialModel.FinancialModelDataMapper;
+import com.mbs.qlcc.adapters.db.FinancialModel.JpaFinancialModelRepository;
 import com.mbs.qlcc.adapters.db.Organization.JpaOrgUserRepository;
 import com.mbs.qlcc.adapters.db.Organization.OrgUserDataMapper;
 import com.mbs.qlcc.adapters.db.User.JpaUserRepository;
 import com.mbs.qlcc.adapters.db.User.UserDataMapper;
+import com.mbs.qlcc.utils.Constant;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -24,12 +27,14 @@ public class DataInitializer {
     private final JpaUserRepository userRepository;
     private final JpaRolePermissionRepository rolePermissionRepository;
     private final JpaOrgUserRepository orgUserRepository;
+    private final JpaFinancialModelRepository financialModelRepository;
 
     @Bean
     @Transactional
     CommandLineRunner init() {
         return args -> {
-            if (roleRepository.count() > 0) {
+            if (roleRepository.count() > 0 || permissionRepository.count() > 0 || userRepository.count() > 0 ||
+                    rolePermissionRepository.count() > 0 || orgUserRepository.count() > 0) {
                 return;
             }
 
@@ -110,8 +115,8 @@ public class DataInitializer {
             RoleDataMapper suadminRole = roleRepository.findByRoleNameAndComplexId("suadmin", "");
             RoleDataMapper adminRole = roleRepository.findByRoleNameAndComplexId("admin", "");
 
-            List<String> suPermissions = permissionRepository.findByModule(List.of("complex", "user"),2);
-            List<String> adPermissions = permissionRepository.findByModule(List.of("complex", "task"),1);
+            List<String> suPermissions = permissionRepository.findByModule(List.of("complex", "user"), 2);
+            List<String> adPermissions = permissionRepository.findByModule(List.of("complex", "task"), 1);
 
             List<RolePermissionDataMapper> suRolePermissions = suPermissions.stream()
                     .map(p -> buildRolePermiss(suadminRole.getId(), p))
@@ -129,6 +134,12 @@ public class DataInitializer {
             RoleDataMapper suAdminRole = roleRepository.findByRoleNameAndComplexId("suadmin", "");
             orgUserRepository.save(buildOrgUser(admin.getId(), suAdminRole.getId()));
 
+            // financial model
+            List<FinancialModelDataMapper> financialModels = List.of(
+                    buildFinancialModel("Mô hình tài chính tập trung", Constant.CENTRALIZED_FINANCIAL_MODEL.getValue()),
+                    buildFinancialModel("Mô hình tài chính phân tán", Constant.DECENTRALIZED_FINANCIAL_MODEL.getValue())
+            );
+            financialModelRepository.saveAll(financialModels);
         };
     }
 
@@ -174,6 +185,15 @@ public class DataInitializer {
                 .userId(userId)
                 .roleId(roleId)
                 .orgId("")
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+    }
+
+    private FinancialModelDataMapper buildFinancialModel(String name, String type) {
+        return FinancialModelDataMapper.builder()
+                .name(name)
+                .type(type)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();

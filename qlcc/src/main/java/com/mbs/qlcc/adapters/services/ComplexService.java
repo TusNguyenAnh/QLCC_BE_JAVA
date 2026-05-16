@@ -19,10 +19,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Complex Service - Adapter Layer
- * Bridges Controller and Usecase layers
- */
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)

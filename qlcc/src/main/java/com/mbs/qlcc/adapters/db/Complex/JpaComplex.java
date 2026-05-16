@@ -44,6 +44,7 @@ public class JpaComplex implements IComplexDsGateway {
     @Override
     public Complex save(Complex complex) {
         ComplexDataMapper mapper = ComplexDataMapper.builder()
+                .id(complex.getId())
                 .complexName(complex.getComplexName())
                 .address(complex.getAddress())
                 .totalBuilding(complex.getTotalBuilding())

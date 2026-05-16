@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class BuildingInteractor implements IBuildingInputBoundary {
-
     private final IBuildingDsGateway buildingGateway;
     private final IBuildingFactory buildingFactory;
 

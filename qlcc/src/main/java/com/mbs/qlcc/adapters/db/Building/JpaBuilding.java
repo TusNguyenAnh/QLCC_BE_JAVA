@@ -21,38 +21,6 @@ public class JpaBuilding implements IBuildingDsGateway {
 
     private final JpaBuildingRepository repository;
 
-    // ========== Mapping Methods ==========
-
-    private Building mapToDomain(BuildingDataMapper mapper) {
-        if (mapper == null) return null;
-        return new Building(
-                mapper.getId(),
-                mapper.getComplexId(),
-                mapper.getBuildingName(),
-                mapper.getStatus(),
-                mapper.getFinancialRatio(),
-                mapper.getCreatedAt(),
-                mapper.getUpdatedAt(),
-                mapper.getDeletedAt()
-        );
-    }
-
-    private BuildingDataMapper mapToData(Building domain) {
-        if (domain == null) return null;
-        return BuildingDataMapper.builder()
-                .id(domain.getId())
-                .complexId(domain.getComplexId())
-                .buildingName(domain.getBuildingName())
-                .status(domain.getStatus())
-                .financialRatio(domain.getFinancialRatio())
-                .createdAt(domain.getCreatedAt())
-                .updatedAt(domain.getUpdatedAt())
-                .deletedAt(domain.getDeletedAt())
-                .build();
-    }
-
-    // ========== CRUD Operations ==========
-
     @Override
     public Building save(Building building) {
         BuildingDataMapper mapper = mapToData(building);
@@ -95,7 +63,6 @@ public class JpaBuilding implements IBuildingDsGateway {
 
     }
 
-    // ========== Validation Methods ==========
 
     @Override
     public boolean existsByBuildingNameAndComplexId(String buildingName, String complexId) {
@@ -123,7 +90,6 @@ public class JpaBuilding implements IBuildingDsGateway {
                 .collect(Collectors.toList());
     }
 
-    // ========== Financial Ratio Operations ==========
 
     @Override
     public List<Building> findBuildingsWithRatio(List<String> ids, String complexId) {
@@ -138,10 +104,37 @@ public class JpaBuilding implements IBuildingDsGateway {
         repository.updateFinancialRatio(id, ratio);
     }
 
-    // ========== Delete Operations ==========
 
     @Override
     public void deleteByIds(List<String> ids) {
         repository.softDeleteByIds(ids);
+    }
+
+    private Building mapToDomain(BuildingDataMapper mapper) {
+        if (mapper == null) return null;
+        return new Building(
+                mapper.getId(),
+                mapper.getComplexId(),
+                mapper.getBuildingName(),
+                mapper.getStatus(),
+                mapper.getFinancialRatio(),
+                mapper.getCreatedAt(),
+                mapper.getUpdatedAt(),
+                mapper.getDeletedAt()
+        );
+    }
+
+    private BuildingDataMapper mapToData(Building domain) {
+        if (domain == null) return null;
+        return BuildingDataMapper.builder()
+                .id(domain.getId())
+                .complexId(domain.getComplexId())
+                .buildingName(domain.getBuildingName())
+                .status(domain.getStatus())
+                .financialRatio(domain.getFinancialRatio())
+                .createdAt(domain.getCreatedAt())
+                .updatedAt(domain.getUpdatedAt())
+                .deletedAt(domain.getDeletedAt())
+                .build();
     }
 }
