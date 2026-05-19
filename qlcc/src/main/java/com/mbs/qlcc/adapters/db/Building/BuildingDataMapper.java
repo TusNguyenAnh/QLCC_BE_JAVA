@@ -9,12 +9,13 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "buildings", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"complex_id", "building_name"})
+        @UniqueConstraint(columnNames = {"complex_id", "building_name"})
 })
 @Data
 @NoArgsConstructor
@@ -22,6 +23,8 @@ import java.util.List;
 @Builder
 public class BuildingDataMapper {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id")
     private String id;
 
     @Column(name = "complex_id", nullable = false)

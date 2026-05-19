@@ -5,6 +5,8 @@ import com.mbs.qlcc.adapters.db.FinancialModel.FinancialModelDataMapper;
 import com.mbs.qlcc.adapters.db.FinancialModel.JpaFinancialModelRepository;
 import com.mbs.qlcc.adapters.db.Organization.JpaOrgUserRepository;
 import com.mbs.qlcc.adapters.db.Organization.OrgUserDataMapper;
+import com.mbs.qlcc.adapters.db.Priority.JpaPriorityRepository;
+import com.mbs.qlcc.adapters.db.Priority.PriorityDataMapper;
 import com.mbs.qlcc.adapters.db.User.JpaUserRepository;
 import com.mbs.qlcc.adapters.db.User.UserDataMapper;
 import com.mbs.qlcc.utils.Constant;
@@ -28,6 +30,7 @@ public class DataInitializer {
     private final JpaRolePermissionRepository rolePermissionRepository;
     private final JpaOrgUserRepository orgUserRepository;
     private final JpaFinancialModelRepository financialModelRepository;
+    private final JpaPriorityRepository priorityRepository;
 
     @Bean
     @Transactional
@@ -140,6 +143,15 @@ public class DataInitializer {
                     buildFinancialModel("Mô hình tài chính phân tán", Constant.DECENTRALIZED_FINANCIAL_MODEL.getValue())
             );
             financialModelRepository.saveAll(financialModels);
+
+            // priority
+            List<PriorityDataMapper> priorities = List.of(
+                    buildPriority("LOW", "", 1),
+                    buildPriority("MEDIUM", "", 2),
+                    buildPriority("HIGH", "", 3),
+                    buildPriority("URGENT", "", 4)
+            );
+            priorityRepository.saveAll(priorities);
         };
     }
 
@@ -194,6 +206,16 @@ public class DataInitializer {
         return FinancialModelDataMapper.builder()
                 .name(name)
                 .type(type)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+    }
+
+    private PriorityDataMapper buildPriority(String priorityName, String description, Integer weight) {
+        return PriorityDataMapper.builder()
+                .priorityName(priorityName)
+                .description(description)
+                .weight(weight)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();

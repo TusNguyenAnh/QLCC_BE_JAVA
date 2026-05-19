@@ -16,10 +16,6 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
-/**
- * JPA Implementation of Complex Data Store Gateway
- */
 @Component
 @RequiredArgsConstructor
 public class JpaComplex implements IComplexDsGateway {
