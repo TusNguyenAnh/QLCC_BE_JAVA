@@ -1,10 +1,7 @@
 package com.mbs.qlcc.adapters.db.Ledger;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.math.BigDecimal;
@@ -12,7 +9,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ledger_summary")
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
