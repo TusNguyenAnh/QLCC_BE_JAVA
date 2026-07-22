@@ -1,18 +1,18 @@
 package com.mbs.qlcc.adapters.db.Workflow;
 
 import com.mbs.qlcc.adapters.db.Apartment.ApartmentDataMapper;
+import com.mbs.qlcc.adapters.db.Task.TaskTypeDataMapper;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "workflow")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -44,5 +44,8 @@ public class WorkflowDataMapper {
     LocalDateTime deletedAt;
 
     @OneToMany(mappedBy = "workflowDataMapper", fetch = FetchType.LAZY)
-    private List<WorkflowStepDataMapper> workflowSteps;
+    private Set<WorkflowStepDataMapper> workflowSteps;
+
+    @OneToMany(mappedBy = "workflow")
+    private List<TaskTypeDataMapper> taskType;
 }

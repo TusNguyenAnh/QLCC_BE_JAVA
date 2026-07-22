@@ -1,5 +1,7 @@
 package com.mbs.qlcc.usecases.response.Workflow;
 
+import com.mbs.qlcc.usecases.response.Task.ITaskTypeResponse;
+
 import java.util.List;
 
 public interface WorkflowResponse {
@@ -12,6 +14,7 @@ public interface WorkflowResponse {
     String getDescription();
 
     int getStatus();
+    List<ITaskTypeResponse> getTaskType();
 
     List<WorkflowStepResponse> getWorkflowSteps();
 }

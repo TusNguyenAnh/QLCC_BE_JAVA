@@ -44,6 +44,7 @@ public class JpaWorkflowStep implements IWorkflowStepDsGateway {
 
     private WorkflowStepDataMapper mapToDataMapper(WorkflowStep workflowStep) {
         return WorkflowStepDataMapper.builder()
+                .id(workflowStep.getId())
                 .workflowDataMapper(WorkflowDataMapper.builder().id(workflowStep.getWorkflowId()).build())
                 .stepOrder(workflowStep.getStepOrder())
                 .orgLevel(workflowStep.getOrgLevel())

@@ -31,7 +31,7 @@ public class WorkflowService {
                         step.getOrgLevel(),
                         step.getStepOrder(),
                         step.getDescription(),
-                        step.getPositions()
+                        step.getPosition()
                 )).toList();
 
         WorkflowInpRequest workflowInpRequest = new WorkflowInpRequest(

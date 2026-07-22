@@ -5,5 +5,4 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface JpaPriorityRepository extends JpaRepository<PriorityDataMapper, String> {
-    Page<PriorityDataMapper> getAll(Pageable pageable);
 }

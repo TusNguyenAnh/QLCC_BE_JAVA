@@ -1,6 +1,7 @@
 package com.mbs.qlcc.usecases.response.Workflow;
 
 import java.util.List;
+import java.util.Set;
 
 public interface WorkflowStepResponse {
     String getId();
@@ -13,6 +14,6 @@ public interface WorkflowStepResponse {
 
     int getStatus();
 
-    List<WorkflowStepApproverResponse> getWorkflowStepApprovers();
+    Set<WorkflowStepApproverResponse> getWorkflowStepApprovers();
 
 }

@@ -1,23 +1,21 @@
 package com.mbs.qlcc.adapters.db.Workflow;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "workflow_step")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class WorkflowStepDataMapper {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
     private String id;
 
@@ -47,5 +45,5 @@ public class WorkflowStepDataMapper {
     LocalDateTime deletedAt;
 
     @OneToMany(mappedBy = "workflowStepDataMapper")
-    private List<WorkflowStepApproverDataMapper> workflowStepApprovers;
+    private Set<WorkflowStepApproverDataMapper> workflowStepApprovers;
 }

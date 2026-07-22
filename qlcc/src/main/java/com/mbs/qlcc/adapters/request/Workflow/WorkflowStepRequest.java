@@ -14,5 +14,5 @@ public class WorkflowStepRequest {
     private int orgLevel;
     private int stepOrder;
     private String description;
-    private List<String> positions;
+    private List<String> position;
 }
