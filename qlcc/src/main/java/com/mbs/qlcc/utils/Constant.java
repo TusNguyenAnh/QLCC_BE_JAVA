@@ -5,7 +5,14 @@ public enum Constant {
     SYSTEM_NAME("Hệ thống quản lý chung cư"),
     ROLE_ADMIN("admin"),
     CENTRALIZED_FINANCIAL_MODEL("centralized"),
-    DECENTRALIZED_FINANCIAL_MODEL("decentralized")
+    DECENTRALIZED_FINANCIAL_MODEL("decentralized"),
+    REVENUE("revenue"),
+    EXPENSE("expense"),
+    APPROVED("APPROVED"),
+    PENDING("PENDING"),
+    REJECT("REJECTED"),
+    UNFINISHED("UNFINISHED"),
+    MEMBER("member"),
     ;
     private String value;
 
