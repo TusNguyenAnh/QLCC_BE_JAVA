@@ -34,8 +34,8 @@ public class ResidenImportResult {
         private ResidentImportRow data;
     }
 
-    public static ResidenImportResult success(String message) {
-        return new ResidenImportResult(true, message, null, null, null, null);
+    public static ResidenImportResult success(boolean status,String message) {
+        return new ResidenImportResult(status, message, null, null, null, null);
     }
 
     public static ResidenImportResult validationError(int totalRows, int errorRows, List<ResidenImportResult.ResidentRowError> errors) {

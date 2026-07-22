@@ -52,21 +52,19 @@ public class ResidentController {
 
 
     @PostMapping("/filter")
-    public ApiResponse<PageResponse<ResAptBdResponse>> filterResident(@RequestBody FilterResidentRequest request) {
+    public ApiResponse<List<ResAptBdResponse>> filterResident(@RequestBody FilterResidentRequest request) {
         String complexId = getCurrentComplexId();
 
-        return ApiResponse.<PageResponse<ResAptBdResponse>>builder()
+        return ApiResponse.<List<ResAptBdResponse>>builder()
                 .result(residentService.filterResident(complexId, request))
                 .build();
     }
 
 
-    @PostMapping("/findByBuildingId")
-    public ApiResponse<List<ResUserResponse>> findByBuildingId(@RequestBody List<String> buildingIds) {
-        String complexId = getCurrentComplexId();
-
+    @PostMapping("/findByBuildingId/{orgId}")
+    public ApiResponse<List<ResUserResponse>> findByBuildingId(@RequestBody List<String> buildingIds, @PathVariable String orgId) {
         return ApiResponse.<List<ResUserResponse>>builder()
-                .result(residentService.findByBuildingId(buildingIds, complexId))
+                .result(residentService.findByBuildingId(buildingIds, orgId))
                 .build();
     }
 
@@ -104,19 +102,25 @@ public class ResidentController {
 
 
     @PostMapping(value = "/import-excel", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponse<ResidenImportResult> importResidents(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<ResidenImportResult> importResidents(@RequestParam("files") MultipartFile file) {
         String complexId = getCurrentComplexId();
-        return ApiResponse.<ResidenImportResult>builder()
-                .result(residentImportService.importFromExcel(file, complexId))
-                .build();
+        ResidenImportResult result = residentImportService.importFromExcel(file, complexId);
+        if (result.isSuccess()) {
+            return ResponseEntity.ok(result);
+        } else {
+            return ResponseEntity.badRequest().body(result);
+        }
     }
 
     @PostMapping(value = "/import-excelAptRes", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponse<AptResImportResult> importAptResidents(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<AptResImportResult> importAptResidents(@RequestParam("files") MultipartFile file) {
         String complexId = getCurrentComplexId();
-        return ApiResponse.<AptResImportResult>builder()
-                .result(aptResImportService.importFromExcel(file, complexId))
-                .build();
+        AptResImportResult result = aptResImportService.importFromExcel(file, complexId);
+        if (result.isSuccess()) {
+            return ResponseEntity.ok(result);
+        } else {
+            return ResponseEntity.badRequest().body(result);
+        }
     }
 
     private String getCurrentComplexId() {

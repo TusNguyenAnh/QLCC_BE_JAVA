@@ -85,10 +85,10 @@ public class ResidentImportService {
                 createResidentRequest.add(request);
             }
 
-            List<String> result = residentInputBoundary.importResidents(createResidentRequest, complexId);
+            String result = residentInputBoundary.importResidents(createResidentRequest, complexId);
             if (!result.isEmpty())
-                return ResidenImportResult.errorExisted(createResidentRequest.size(), result.size(), result);
-            return ResidenImportResult.success("Thêm mới thành công");
+                return ResidenImportResult.success(false, result);
+            return ResidenImportResult.success(true, "Thêm mới thành công");
 
         } catch (Exception e) {
             return ResidenImportResult.databaseError(e.getMessage());
@@ -118,7 +118,7 @@ public class ResidentImportService {
             String relationship = getStringCellValue(row, 6);
             importRow.setRelationship(relationship);
 
-            int gender = normalizeGender(getStringCellValue(row, 7));
+            int gender = normalizeGender(getStringCellValue(row, 7).trim().toLowerCase());
             importRow.setGender(gender);
 
         } catch (Exception e) {
@@ -142,14 +142,14 @@ public class ResidentImportService {
             errors.add("Ngày sinh không hợp lệ");
         }
 
-        if (isValidEmail(row.getEmail()) || row.getEmail().isEmpty()) {
+        if (!isValidEmail(row.getEmail()) || row.getEmail().isEmpty()) {
             errors.add("Email không hợp lệ");
         }
 
-        if (isValidCccd(row.getCccd()) || row.getCccd().isEmpty()) {
+        if (!isValidCccd(row.getCccd()) || row.getCccd().isEmpty()) {
             errors.add("CCCD phải có 9-12 chữ số");
         }
-        if (isValidPhoneNumber(row.getPhoneNumber()) || row.getPhoneNumber().isEmpty()) {
+        if (!isValidPhoneNumber(row.getPhoneNumber()) || row.getPhoneNumber().isEmpty()) {
             errors.add("Số điện thoại phải có 10-11 chữ số");
         }
         if (row.getRelationship() == null || row.getRelationship().isEmpty()) {
@@ -169,21 +169,22 @@ public class ResidentImportService {
 
     private LocalDateTime getDateCellValue(Row row, int columnIndex) {
         try {
-            return row.getCell(columnIndex).getLocalDateTimeCellValue();
+            String birthday = row.getCell(columnIndex).getStringCellValue();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            return LocalDate.parse(birthday, formatter).atStartOfDay();
         } catch (Exception e) {
             return null;
         }
     }
 
     private int normalizeGender(String gender) {
-        List<String> maleValues = new ArrayList<>(List.of("nam", "male", "m"));
-        List<String> femaleValues = new ArrayList<>(List.of("nữ", "female", "f"));
+        List<String> maleValues = new ArrayList<>(List.of("nam", "male", "m", "Nam"));
+        List<String> femaleValues = new ArrayList<>(List.of("nữ", "female", "f", "Nữ"));
         if (maleValues.contains(gender))
             return 0;
-        else if (femaleValues.contains(gender))
+        if (femaleValues.contains(gender))
             return 1;
-        else
-            return -1;
+        return -1;
     }
 
     private boolean isValidEmail(String email) {

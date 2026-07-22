@@ -44,11 +44,14 @@ public class ResidentService {
         return residentUseCase.findById(id);
     }
 
-    public PageResponse<ResAptBdResponse> filterResident(String complexId, FilterResidentRequest request) {
+    public List<ResAptBdResponse> filterResident(String complexId, FilterResidentRequest request) {
+        String aptNumber = request.getAptNumber() != null && !request.getAptNumber().isEmpty() ? request.getAptNumber() : null;
+        String buildingId = request.getBuildingId() != null && !request.getBuildingId().isEmpty() ? request.getBuildingId() : null;
+
         FilterResidentInpRequest inpRequest = new FilterResidentInpRequest(
                 request.getFloor(),
-                request.getBuildingId(),
-                request.getAptNumber(),
+                buildingId,
+                aptNumber,
                 request.getRelationship(),
                 request.getOrder(),
                 request.getPageNumber(),
@@ -59,8 +62,8 @@ public class ResidentService {
     }
 
 
-    public List<ResUserResponse> findByBuildingId(List<String> buildingIds, String complexId) {
-        return residentUseCase.findByBuildingId(buildingIds, complexId);
+    public List<ResUserResponse> findByBuildingId(List<String> buildingIds, String orgId) {
+        return residentUseCase.findByBuildingId(buildingIds, orgId);
     }
 
     public List<ResUserResponse> findByOrgId(String orgId) {

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -24,30 +25,10 @@ public class JpaResident implements IResidentDsGateway {
     private final JpaResidentRepository repository;
 
     //show all
-    public PageResponse<IResAptBd> findAll(String complexId, FilterResidentInpRequest filterResidentInpRequest) {
-        Sort.Direction direction = filterResidentInpRequest.getOrder() != null && filterResidentInpRequest.getOrder().equalsIgnoreCase("desc")
-                ? Sort.Direction.DESC
-                : Sort.Direction.ASC;
+    public List<IResAptBd> findAll(String complexId, FilterResidentInpRequest filterResidentInpRequest) {
+        return repository.filter(complexId, filterResidentInpRequest.getBuildingId(),
+                filterResidentInpRequest.getFloor(), filterResidentInpRequest.getAptNumber(), filterResidentInpRequest.getRelationship());
 
-        Pageable pageable = PageRequest.of(
-                filterResidentInpRequest.getPageNumber(),
-                filterResidentInpRequest.getPageSize(),
-                direction,
-                "created_at"
-        );
-
-
-        Page<IResAptBd> page = repository.filter(complexId, filterResidentInpRequest.getBuildingId(),
-                filterResidentInpRequest.getFloor(), filterResidentInpRequest.getAptNumber(), filterResidentInpRequest.getRelationship(), pageable);
-
-
-        return new PageResponse<IResAptBd>(
-                page.getContent(),
-                page.getNumber(),
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages()
-        );
     }
 
     @Override
@@ -97,7 +78,7 @@ public class JpaResident implements IResidentDsGateway {
     }
 
     @Override
-    public List<Resident> findCccdsByComplexId(String complexId, List<String> cccds) {
+    public List<Resident> findCccdsByComplexId(String complexId, Set<String> cccds) {
         return repository.findIdsByComplexIdAndCccds(complexId, cccds).stream().map(this::mapToEntity).toList();
     }
 

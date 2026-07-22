@@ -93,11 +93,11 @@ public class ResidentInteractor implements IResidentInputBoundary {
     }
 
     @Override
-    public PageResponse<ResAptBdResponse> filterResident(String complexId, FilterResidentInpRequest request) {
+    public List<ResAptBdResponse> filterResident(String complexId, FilterResidentInpRequest request) {
         var result = residentGateway.findAll(complexId, request);
 
         // Map residents to responses
-        List<ResAptBdResponse> responses = result.getData().stream()
+        return result.stream()
                 .map(p -> new ResAptBdResponse(
                         p.getId(),
                         p.getComplexId(),
@@ -113,14 +113,6 @@ public class ResidentInteractor implements IResidentInputBoundary {
                         p.getAptNumber(),
                         p.getStatus()
                 )).toList();
-
-        return new PageResponse<>(
-                responses,
-                result.getPage(),
-                result.getSize(),
-                result.getTotalElements(),
-                result.getTotalPages()
-        );
     }
 
     @Override
@@ -129,8 +121,8 @@ public class ResidentInteractor implements IResidentInputBoundary {
     }
 
     @Override
-    public List<ResUserResponse> findByBuildingId(List<String> buildingId, String complexId) {
-        var residents = aptResidentGateway.findResidentsInBuildingNotInOrg(buildingId, complexId);
+    public List<ResUserResponse> findByBuildingId(List<String> buildingId, String orgId) {
+        var residents = aptResidentGateway.findResidentsInBuildingNotInOrg(buildingId, orgId);
         return residents.stream()
                 .map(r -> new ResUserResponse(
                         r.getId(),
@@ -150,7 +142,7 @@ public class ResidentInteractor implements IResidentInputBoundary {
 
     // tiep tuc
     @Override
-    public List<String> importResidents(List<ImportResidentInpRequest> residents, String complexId) {
+    public String importResidents(List<ImportResidentInpRequest> residents, String complexId) {
         // Collect all emails, phones, cccds for batch duplicate check
         Set<String> emails = new HashSet<>();
         Set<String> phones = new HashSet<>();
@@ -171,40 +163,32 @@ public class ResidentInteractor implements IResidentInputBoundary {
         // Check for duplicates in database
         List<String> existingEmails = residentGateway.findEmailsByComplexId(complexId, emails.stream().toList());
         List<String> existingPhones = residentGateway.findPhoneNumbersByComplexId(complexId, phones.stream().toList());
-        List<String> existingCccds = residentGateway.findCccdsByComplexId(complexId, cccds.stream().toList()).stream().map(Resident::getCccd).toList();
+        List<String> existingCccds = residentGateway.findCccdsByComplexId(complexId, cccds).stream().map(Resident::getCccd).toList();
 
         List<String> errorsList = new ArrayList<>();
+        StringBuilder errorBuilder = new StringBuilder();
         if (!existingEmails.isEmpty() || !existingPhones.isEmpty() || !existingCccds.isEmpty()) {
             int rowNum = 4;
-            StringBuilder errorBuilder = new StringBuilder();
             for (ImportResidentInpRequest resident : residents) {
-                boolean hasError = false;
                 rowNum++;
                 errorBuilder.append("Dòng ").append(rowNum).append(": ");
                 // Check duplicate email
                 if (existingEmails.contains(resident.getEmail())) {
                     errorBuilder.append("Email đã tồn tại; ");
-                    hasError = true;
                 }
 
                 // Check duplicate phone
                 if (existingPhones.contains(resident.getPhoneNumber())) {
                     errorBuilder.append("Số điện thoại đã tồn tại; ");
-                    hasError = true;
                 }
 
                 // Check duplicate cccd
                 if (existingCccds.contains(resident.getCccd())) {
                     errorBuilder.append("CCCD đã tồn tại; ");
-                    hasError = true;
-                }
-
-                if (hasError) {
-                    errorsList.add(errorBuilder.toString());
                 }
 
             }
-            return errorsList;
+            return errorBuilder.toString();
         }
 
         List<Resident> residentSave = residents.stream()
@@ -221,12 +205,12 @@ public class ResidentInteractor implements IResidentInputBoundary {
 
         residentGateway.saveAll(residentSave);
 
-        return errorsList;
+        return errorBuilder.toString();
     }
 
 
     @Override
-    public List<String> importAptResidents(List<ImportAptResidentInpRequest> request, String complexId) {
+    public String importAptResidents(List<ImportAptResidentInpRequest> request, String complexId) {
         Set<String> cccds = new HashSet<>();
         Set<String> buildingName = new HashSet<>();
         for (ImportAptResidentInpRequest data : request) {
@@ -240,7 +224,7 @@ public class ResidentInteractor implements IResidentInputBoundary {
 
         // kiem tra building va cccd co ton tai hay khong
         Map<String, String> existingBuilding = buildingGateway.findByBuildingName(buildingName, complexId);
-        Map<String, String> existingCccds = residentGateway.findCccdsByComplexId(complexId, cccds.stream().toList())
+        Map<String, String> existingCccds = residentGateway.findCccdsByComplexId(complexId, cccds)
                 .stream()
                 .collect(Collectors.toMap(
                         Resident::getCccd,
@@ -256,27 +240,19 @@ public class ResidentInteractor implements IResidentInputBoundary {
             int rowNum = 4;
             StringBuilder errorBuilder = new StringBuilder();
             for (ImportAptResidentInpRequest aptres : request) {
-                boolean hasError = false;
                 rowNum++;
                 errorBuilder.append("Dòng ").append(rowNum).append(": ");
                 // Check duplicate email
                 if (!existingBuilding.containsKey(aptres.getBuildingName())) {
                     errorBuilder.append("Tòa nhà không tồn tại; ");
-                    hasError = true;
                 }
 
                 // Check duplicate cccd
                 if (!existingCccds.containsKey(aptres.getCccd())) {
                     errorBuilder.append("CCCD không tồn tại; ");
-                    hasError = true;
                 }
-
-                if (hasError) {
-                    errorsList.add(errorBuilder.toString());
-                }
-
             }
-            return errorsList;
+            return errorBuilder.toString();
         }
 
         //check can ho co thuoc toa nha k
@@ -300,14 +276,13 @@ public class ResidentInteractor implements IResidentInputBoundary {
             StringBuilder errorBuilder = new StringBuilder();
             for (ImportAptResidentInpRequest aptres : request) {
                 rowNum++;
-                errorBuilder.append("Dòng ").append(rowNum).append(": ");
                 String buildingIdForRow = existingBuilding.get(aptres.getBuildingName());
                 if (!aptMapBuilding.get(buildingIdForRow).contains(aptres.getApartmentNumber())) {
+                    errorBuilder.append("Dòng ").append(rowNum).append(": ");
                     errorBuilder.append("Căn hộ ");
                     errorBuilder.append(aptres.getApartmentNumber());
                     errorBuilder.append(" không tồn tại trong tòa nhà ");
-                    errorBuilder.append(aptres.getBuildingName());
-                    errorsList.add(errorBuilder.toString());
+                    errorBuilder.append(aptres.getBuildingName()).append("; ");
                     continue;
                 }
                 aptResidentsSave.add(aptResidentFactory.create(
@@ -316,12 +291,11 @@ public class ResidentInteractor implements IResidentInputBoundary {
                 ));
             }
 
-            if (!errorsList.isEmpty())
-                return errorsList;
+            if (!errorBuilder.isEmpty())
+                return errorBuilder.toString();
             aptResidentGateway.saveAll(aptResidentsSave);
         }
-
-        return errorsList;
+        return "";
     }
 
     @Override

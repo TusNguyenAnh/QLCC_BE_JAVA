@@ -8,9 +8,10 @@ import com.mbs.qlcc.usecases.response.Resident.ResUserResponse;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface IResidentDsGateway {
-    PageResponse<IResAptBd> findAll(String complexId, FilterResidentInpRequest filterResidentInpRequest);
+    List<IResAptBd> findAll(String complexId, FilterResidentInpRequest filterResidentInpRequest);
 
     Resident save(Resident resident);
 
@@ -30,6 +31,6 @@ public interface IResidentDsGateway {
 
     List<String> findPhoneNumbersByComplexId(String complexId, List<String> phoneNumbers);
 
-    List<Resident> findCccdsByComplexId(String complexId, List<String> cccds);
+    List<Resident> findCccdsByComplexId(String complexId, Set<String> cccds);
 
 }

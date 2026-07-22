@@ -15,15 +15,15 @@ public interface IResidentInputBoundary {
 
     ResidentResponse findById(String id);
 
-    PageResponse<ResAptBdResponse> filterResident(String complexId, FilterResidentInpRequest request);
+    List<ResAptBdResponse> filterResident(String complexId, FilterResidentInpRequest request);
 
-    List<ResUserResponse> findByBuildingId(List<String> buildingId, String complexId);
+    List<ResUserResponse> findByBuildingId(List<String> buildingId, String orgId);
 
     List<ResUserResponse> findByOrgId(String orgId);
 
-    List<String> importResidents(List<ImportResidentInpRequest> residents, String complexId);
+    String importResidents(List<ImportResidentInpRequest> residents, String complexId);
 
-    List<String> importAptResidents(List<ImportAptResidentInpRequest> request, String complexId);
+    String importAptResidents(List<ImportAptResidentInpRequest> request, String complexId);
 
     String addResidentsToOrg(UpdateResidentInOrgInpRequest request);
 
