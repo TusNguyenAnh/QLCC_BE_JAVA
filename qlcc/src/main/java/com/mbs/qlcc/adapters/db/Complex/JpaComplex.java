@@ -49,6 +49,7 @@ public class JpaComplex implements IComplexDsGateway {
                 .phoneContact(complex.getPhoneContact())
                 .emailContact(complex.getEmailContact())
                 .description(complex.getDescription())
+                .financialModel(complex.getFinancialModel())
                 .createdAt(complex.getCreatedAt())
                 .updatedAt(complex.getUpdatedAt())
                 .deletedAt(complex.getDeletedAt())

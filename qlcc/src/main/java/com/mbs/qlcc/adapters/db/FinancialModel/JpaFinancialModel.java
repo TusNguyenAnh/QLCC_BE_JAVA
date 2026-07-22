@@ -24,7 +24,7 @@ public class JpaFinancialModel implements IFinancialModelDsGateway {
 
     @Override
     public FinancialModel getFinancialModelByName(String name) {
-        return repository.findByName(name).map(this::mapToFinancialModel).orElse(null);
+        return repository.findByType(name).map(this::mapToFinancialModel).orElse(null);
     }
 
     private FinancialModel mapToFinancialModel(FinancialModelDataMapper dataMapper) {
