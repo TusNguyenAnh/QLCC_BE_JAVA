@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -94,15 +95,17 @@ public class ApartmentController {
 
 
     @PostMapping(value = "/import-excel", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponse<ApartmentImportResult> importFromExcel(
+    public ResponseEntity<ApartmentImportResult> importFromExcel(
             @RequestParam("files") MultipartFile file) {
 
         String complexId = getCurrentComplexId();
         ApartmentImportResult result = importService.importFromExcel(file, complexId);
 
-        return ApiResponse.<ApartmentImportResult>builder()
-                .result(result)
-                .build();
+        if (result.isSuccess()) {
+            return ResponseEntity.ok(result);
+        } else {
+            return ResponseEntity.badRequest().body(result);
+        }
     }
 
     private String getCurrentComplexId() {

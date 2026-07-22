@@ -13,13 +13,14 @@ import java.util.List;
 public class ApartmentImportResult {
     private boolean success;
     private String message;
-    
+    private List<String> messageErrors;
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer totalRows;
-    
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer errorRows;
-    
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<ApartmentRowError> errors;
 
@@ -33,14 +34,15 @@ public class ApartmentImportResult {
     }
 
     // Factory methods
-    public static ApartmentImportResult success(String message) {
-        return new ApartmentImportResult(true, message, null, null, null);
+    public static ApartmentImportResult success(boolean status, String message) {
+        return new ApartmentImportResult(status, message, null, null, null, null);
     }
 
     public static ApartmentImportResult validationError(int totalRows, int errorRows, List<ApartmentRowError> errors) {
         return new ApartmentImportResult(
                 false,
                 "Invalid data. Please double-check the faulty lines.",
+                null,
                 totalRows,
                 errorRows,
                 errors
@@ -61,6 +63,18 @@ public class ApartmentImportResult {
                 "Error saving data to the database: " + message,
                 null,
                 null,
+                null,
+                null
+        );
+    }
+
+    public static ApartmentImportResult errorExisted(int totalRows, int errorRows, List<String> existed) {
+        return new ApartmentImportResult(
+                false,
+                "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại các dòng bị lỗi.",
+                existed,
+                totalRows,
+                errorRows,
                 null
         );
     }

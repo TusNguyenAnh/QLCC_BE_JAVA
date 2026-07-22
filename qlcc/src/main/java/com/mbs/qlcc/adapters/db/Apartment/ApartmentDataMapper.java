@@ -2,10 +2,7 @@ package com.mbs.qlcc.adapters.db.Apartment;
 
 import com.mbs.qlcc.adapters.db.Building.BuildingDataMapper;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,7 +11,8 @@ import java.time.LocalDateTime;
 @Table(name = "apartments", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"building_id", "apt_number"})
 })
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -41,7 +39,7 @@ public class ApartmentDataMapper {
     @Column(name = "gross_area", nullable = false, precision = 10, scale = 2)
     private BigDecimal grossArea;
 
-    @Column(name = "carpet_area", nullable = false,precision = 10, scale = 2)
+    @Column(name = "carpet_area", nullable = false, precision = 10, scale = 2)
     private BigDecimal carpetArea;
 
     @Column(name = "coefficient", nullable = false)

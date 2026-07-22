@@ -2,6 +2,7 @@ package com.mbs.qlcc.adapters.services;
 
 import com.mbs.qlcc.adapters.imports.ApartmentImportResult;
 import com.mbs.qlcc.adapters.imports.ApartmentImportRow;
+import com.mbs.qlcc.adapters.imports.AptResImportResult;
 import com.mbs.qlcc.adapters.request.Apartment.CreateApartmentRequest;
 import com.mbs.qlcc.adapters.services.ApartmentService;
 import com.mbs.qlcc.usecases.response.Apartment.ApartmentResponse;
@@ -81,10 +82,9 @@ public class ApartmentImportService {
             }
 
             String result = apartmentService.importExcel(createApartmentRequests, complexId);
-            if (!result.equals("DONE"))
-                return ApartmentImportResult.success(result);
-            return ApartmentImportResult.success("Thêm mới thành công");
-
+            if (!Objects.equals(result, "DONE"))
+                return ApartmentImportResult.success(false, result);
+            return ApartmentImportResult.success(true, "Import successful!");
         } catch (Exception e) {
             return ApartmentImportResult.databaseError(e.getMessage());
         }

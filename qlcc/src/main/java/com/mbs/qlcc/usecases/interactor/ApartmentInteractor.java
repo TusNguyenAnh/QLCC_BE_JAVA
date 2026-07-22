@@ -66,6 +66,10 @@ public class ApartmentInteractor implements IApartmentInputBoundary {
                 .collect(Collectors.toSet());
 
         Map<String, String> exitsBuilding = buildingDsGateway.findByBuildingName(uniqueBuilding, complexId);
+        Map<String, String> buildingNames = exitsBuilding.entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+
 
         Set<String> result = new HashSet<>(uniqueBuilding);
         result.removeAll(exitsBuilding.keySet());
@@ -98,7 +102,7 @@ public class ApartmentInteractor implements IApartmentInputBoundary {
         }
 
         // Validate: aptNumber unique per building
-        Map <String, List<String>> apartmentsByBuilding = apartments.stream()
+        Map<String, List<String>> apartmentsByBuilding = apartments.stream()
                 .collect(Collectors.groupingBy(Apartment::getBuildingId, Collectors.mapping(Apartment::getAptNumber, Collectors.toList())));
 
         for (Map.Entry<String, List<String>> entry : apartmentsByBuilding.entrySet()) {
@@ -108,7 +112,7 @@ public class ApartmentInteractor implements IApartmentInputBoundary {
             List<Apartment> existingApts = apartmentGateway.findByBuildingIdAndAptNumberIn(buildingId, aptNumbers);
             if (!existingApts.isEmpty()) {
                 StringBuilder error = new StringBuilder();
-                error.append("Trong tòa nhà ").append(buildingId).append(", các căn hộ sau đã tồn tại: ");
+                error.append("Trong ").append(buildingNames.get(buildingId)).append(", các căn hộ sau đã tồn tại: ");
                 for (Apartment apt : existingApts
                 ) {
                     error.append(apt.getAptNumber()).append(", ");
