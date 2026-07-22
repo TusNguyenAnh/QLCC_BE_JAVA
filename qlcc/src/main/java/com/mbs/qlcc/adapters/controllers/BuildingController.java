@@ -73,7 +73,7 @@ public class BuildingController {
                 .build();
     }
 
-    @DeleteMapping
+    @PostMapping("/delete")
     public ApiResponse<String> delete(
             @RequestBody List<String> buildingIds
     ) {

@@ -36,8 +36,8 @@ public class ComplexInteractor implements IComplexInputBoundary {
     IOrgUserDsGateway orgUserDsGateway;
 
     public ComplexInteractor(IComplexDsGateway complexGateway, IComplexFactory complexFactory, IEmailDsGateway emailDsGateway,
-                              IUserDsGateway userDsGateway, ITokenDsGateway tokenDsGateway, IRoleDsGateway roleDsGateway,
-                              IOrgUserDsGateway orgUserDsGateway) {
+                             IUserDsGateway userDsGateway, ITokenDsGateway tokenDsGateway, IRoleDsGateway roleDsGateway,
+                             IOrgUserDsGateway orgUserDsGateway) {
         this.complexGateway = complexGateway;
         this.complexFactory = complexFactory;
         this.emailDsGateway = emailDsGateway;
@@ -120,10 +120,10 @@ public class ComplexInteractor implements IComplexInputBoundary {
             for (Complex c : approved) {
                 //tao user
                 String passwordRaw = "1"; //userDsGateway.generatePassword();
-                UserInpRequest userInpRequest = new UserInpRequest(c.getPhoneContact(), tokenDsGateway.hash(passwordRaw), c.getId(), "", "");
-                User user =userDsGateway.store(userInpRequest);
+                UserInpRequest userInpRequest = new UserInpRequest(c.getPhoneContact(), passwordRaw, c.getId(), "", "");
+                User user = userDsGateway.store(userInpRequest);
                 //gan role cho acc
-                OrgUser orgUser = new OrgUser(user.getId(),"",roleAdminId);
+                OrgUser orgUser = new OrgUser(user.getId(), "", roleAdminId);
                 orgUserDsGateway.saveOrgUser(List.of(orgUser));
                 //gui mail
                 emailDsGateway.sendMail(c.getEmailContact(), Constant.SUBJECT.getValue(), Constant.SYSTEM_NAME.getValue(),

@@ -26,10 +26,10 @@ import java.util.Map;
 public class MediaFileController {
     MediaFileService mediaFileService;
 
-    @GetMapping("/view")
-    public ApiResponse<Map<String, List<String>>> viewImage(@RequestParam String ownerId) {
+    @GetMapping("/view/{id}")
+    public ApiResponse<Map<String, List<String>>> viewImage(@PathVariable String id) {
         return ApiResponse.<Map<String, List<String>>>builder()
-                .result(mediaFileService.findByOwnerId(ownerId))
+                .result(mediaFileService.findByOwnerId(id))
                 .build();
     }
 }

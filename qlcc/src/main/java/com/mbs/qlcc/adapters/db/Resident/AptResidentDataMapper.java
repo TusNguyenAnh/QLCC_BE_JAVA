@@ -2,15 +2,14 @@ package com.mbs.qlcc.adapters.db.Resident;
 
 import com.mbs.qlcc.adapters.db.Apartment.ApartmentDataMapper;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "apt_res",uniqueConstraints = {@UniqueConstraint(columnNames = {"apt_id", "resident_id"})})
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

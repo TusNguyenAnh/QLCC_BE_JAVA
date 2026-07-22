@@ -23,10 +23,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ComplexService {
-
     IComplexInputBoundary useCase;
     MediaFileService mediaFileService;
-
 
     @Transactional
     public ComplexResponse create(CreateComplexRequest request) throws IOException {
@@ -49,7 +47,6 @@ public class ComplexService {
         return useCase.findById(id);
     }
 
-    @PreAuthorize("hasAuthority('manage:complex')")
     public PageResponse<ComplexResponse> filterByStatus(int status, FilterComplexRequest request) {
         FilterComplexInpRequest inpRequest = new FilterComplexInpRequest(
                 request.getKeyword(),
@@ -62,9 +59,6 @@ public class ComplexService {
         return useCase.filterByStatus(status, inpRequest);
     }
 
-    /**
-     * Approve complexes
-     */
     @Transactional
     public List<ComplexResponse> approveComplex(ApproveRejectComplexRequest request) {
         ApproveRejectComplexInpRequest inpRequest = new ApproveRejectComplexInpRequest(request.getIds());
@@ -72,9 +66,6 @@ public class ComplexService {
         return useCase.approveComplex(inpRequest);
     }
 
-    /**
-     * Reject complexes
-     */
     @Transactional
     public void rejectComplex(ApproveRejectComplexRequest request) {
         ApproveRejectComplexInpRequest inpRequest = new ApproveRejectComplexInpRequest(request.getIds());

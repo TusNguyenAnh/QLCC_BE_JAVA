@@ -1,10 +1,7 @@
 package com.mbs.qlcc.adapters.db.Building;
 
 import com.mbs.qlcc.adapters.db.Apartment.ApartmentDataMapper;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -17,7 +14,8 @@ import java.util.List;
 @Table(name = "buildings", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"complex_id", "building_name"})
 })
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

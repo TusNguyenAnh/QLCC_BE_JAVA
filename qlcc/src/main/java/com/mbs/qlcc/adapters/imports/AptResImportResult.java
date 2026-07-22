@@ -33,8 +33,8 @@ public class AptResImportResult {
         private AptResImportRow data;
     }
 
-    public static AptResImportResult success(String message) {
-        return new AptResImportResult(true, message, null, null, null, null);
+    public static AptResImportResult success(boolean status, String message) {
+        return new AptResImportResult(status, message, null, null, null, null);
     }
 
     public static AptResImportResult validationError(int totalRows, int errorRows, List<AptResImportResult.AptResRowError> errors) {
@@ -70,7 +70,7 @@ public class AptResImportResult {
     public static AptResImportResult databaseError(String message) {
         return new AptResImportResult(
                 false,
-                "Lỗi khi lưu dữ liệu vào database: " + message,
+                "Lỗi khi lưu dữ liệu vào database " ,
                 null,
                 null,
                 null,

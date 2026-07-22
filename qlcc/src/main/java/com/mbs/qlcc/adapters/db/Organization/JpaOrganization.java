@@ -82,8 +82,8 @@ public class JpaOrganization implements IOrganizationDsGateway {
                 .description(organization.getDescription())
                 .level(organization.getLevel())
                 .status(organization.getStatus())
-                .createdAt(organization.getCreatedAt())
-                .updatedAt(organization.getUpdatedAt())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
         OrganizationDataMapper saved = jpaOrganizationRepository.save(mapper);
         return mapToEntity(saved);

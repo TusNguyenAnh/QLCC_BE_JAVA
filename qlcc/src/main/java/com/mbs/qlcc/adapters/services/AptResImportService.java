@@ -73,10 +73,10 @@ public class AptResImportService {
                 aptResidentInpRequests.add(request);
             }
 
-            List<String> result = residentInputBoundary.importAptResidents(aptResidentInpRequests, complexId);
+            String result = residentInputBoundary.importAptResidents(aptResidentInpRequests, complexId);
             if (!result.isEmpty())
-                return AptResImportResult.errorExisted(aptResidentInpRequests.size(), result.size(), result);
-            return AptResImportResult.success("Thêm mới thành công");
+                return AptResImportResult.success(false, result);
+            return AptResImportResult.success(true, "Thêm mới thành công");
 
         } catch (Exception e) {
             return AptResImportResult.databaseError(e.getMessage());
@@ -116,7 +116,7 @@ public class AptResImportService {
             errors.add("Căn hộ không được để trống");
         }
 
-        if (isValidCccd(row.getCccd()) || row.getCccd().isEmpty()) {
+        if (!isValidCccd(row.getCccd()) || row.getCccd().isEmpty()) {
             errors.add("CCCD phải có 9-12 chữ số");
         }
 
