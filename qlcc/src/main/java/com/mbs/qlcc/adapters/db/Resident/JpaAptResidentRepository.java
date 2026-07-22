@@ -10,7 +10,9 @@ import java.util.Optional;
 
 
 public interface JpaAptResidentRepository extends JpaRepository<AptResidentDataMapper, String> {
-    @Query("SELECT DISTINCT ar FROM AptResidentDataMapper ar " +
+    @Query("SELECT DISTINCT u.id as id, r.complexId as complexId, r.fullname as fullname, r.gender as gender, " +
+            "r.email as email, r.birthday as birthday, r.relationship as relationship, r.phoneNumber as phoneNumber, r.cccd as cccd, r.id as userId " +
+            "FROM AptResidentDataMapper ar " +
             "JOIN ResidentDataMapper r ON ar.residentDataMapper.id = r.id " +
             "JOIN ApartmentDataMapper a ON ar.apartmentDataMapper.id = a.id " +
             "JOIN UserDataMapper u ON u.resId = r.id " +

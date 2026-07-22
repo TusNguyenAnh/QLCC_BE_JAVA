@@ -1,13 +1,15 @@
 package com.mbs.qlcc.adapters.db.Authentication;
 
+import com.mbs.qlcc.adapters.db.Workflow.WorkflowStepDataMapper;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "roles")
-@Data
 @Getter
 @Setter
 @AllArgsConstructor
@@ -40,4 +42,7 @@ public class RoleDataMapper {
 
     @Column(name = "is_deleted")
     boolean isDeleted = false;
+
+    @OneToMany(mappedBy = "roleDataMapper", fetch = FetchType.LAZY)
+    private List<RolePermissionDataMapper> rolePermission;
 }

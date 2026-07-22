@@ -9,10 +9,9 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateOrganizationRequest {
-    String complexId;
     String orgCode;
     String orgName;
     String description;
     String parentOrgId;
-    List<String> buildingIds;  // Optional
+    List<String> building;  // Optional
 }

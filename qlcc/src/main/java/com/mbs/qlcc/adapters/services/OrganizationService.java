@@ -23,30 +23,18 @@ public class OrganizationService {
 
     IOrganizationInputBoundary useCase;
 
-    /**
-     * Get all root organizations for a complex (paginated)
-     */
     public PageResponse<OrganizationResponse> show(String complexId, int page, int perPage) {
         return useCase.show(complexId, page, perPage);
     }
 
-    /**
-     * Find organization by ID
-     */
     public OrganizationResponse findById(String id) {
         return useCase.findById(id);
     }
 
-    /**
-     * Get organizations excluding descendants of a specific organization
-     */
     public List<OrganizationWithoutChildResponse> getAllWithoutDescendants(String parentOrgId, String complexId) {
         return useCase.getAllWithoutDescendants(parentOrgId, complexId);
     }
 
-    /**
-     * Create a new organization
-     */
     @Transactional
     public OrganizationResponse create(String complexId, CreateOrganizationRequest request) {
         CreateOrganizationInpRequest inpRequest = new CreateOrganizationInpRequest(
@@ -60,41 +48,29 @@ public class OrganizationService {
         return useCase.create(inpRequest);
     }
 
-    /**
-     * Update an organization
-     */
     @Transactional
-    public OrganizationResponse update(String id, UpdateOrganizationRequest request) {
+    public OrganizationResponse update(String id, UpdateOrganizationRequest request, String complexId) {
         UpdateOrganizationInpRequest inpRequest = new UpdateOrganizationInpRequest(
-                request.getComplexId(),
+                complexId,
                 request.getOrgCode(),
                 request.getOrgName(),
                 request.getDescription(),
                 request.getParentOrgId(),
-                request.getBuildingIds()
+                request.getBuilding()
         );
         return useCase.update(id, inpRequest);
     }
 
-    /**
-     * Delete organizations (soft delete)
-     */
     @Transactional
     public void delete(List<String> organizationIds) {
         useCase.delete(organizationIds);
     }
 
-    /**
-     * Get maximum organizational level in a complex
-     */
     public Integer getTopLevel(String complexId) {
         return useCase.getTopLevel(complexId);
     }
 
-    /**
-     * Get available building IDs for a parent organization
-     */
-    public List<String> getAvailableBuildingIds(String parentOrgId) {
-        return useCase.getAvailableBuildingIds(parentOrgId);
+    public List<String> getAvailableBuildingIds(String parentOrgId, String complexId) {
+        return useCase.getAvailableBuildingIds(parentOrgId, complexId);
     }
 }

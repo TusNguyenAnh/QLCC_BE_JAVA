@@ -1,10 +1,12 @@
 package com.mbs.qlcc.usecases.interactor;
 
+import com.mbs.qlcc.entities.Building.Building;
 import com.mbs.qlcc.entities.Organization.Organization;
 import com.mbs.qlcc.entities.Organization.IOrganizationFactory;
 import com.mbs.qlcc.entities.Organization.OrgBuilding;
 import com.mbs.qlcc.usecases.exception.AppException;
 import com.mbs.qlcc.usecases.input.IOrganizationInputBoundary;
+import com.mbs.qlcc.usecases.output.Building.IBuildingDsGateway;
 import com.mbs.qlcc.usecases.output.Organization.IOrganizationDsGateway;
 import com.mbs.qlcc.usecases.output.Organization.IOrgBuildingDsGateway;
 import com.mbs.qlcc.usecases.request.Organization.CreateOrganizationInpRequest;
@@ -18,20 +20,16 @@ import com.mbs.qlcc.utils.ErrorCode;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * Organization Interactor - Implements Organization Use Cases
- * Contains all business logic for Organization operations
- */
 public class OrganizationInteractor implements IOrganizationInputBoundary {
     private final IOrganizationDsGateway organizationGateway;
     private final IOrgBuildingDsGateway orgBuildingGateway;
+    private final IBuildingDsGateway buildingGateway;
     private final IOrganizationFactory organizationFactory;
 
-    public OrganizationInteractor(IOrganizationDsGateway organizationGateway,
-                                  IOrgBuildingDsGateway orgBuildingGateway,
-                                  IOrganizationFactory organizationFactory) {
+    public OrganizationInteractor(IOrganizationDsGateway organizationGateway, IOrgBuildingDsGateway orgBuildingGateway, IBuildingDsGateway buildingGateway, IOrganizationFactory organizationFactory) {
         this.organizationGateway = organizationGateway;
         this.orgBuildingGateway = orgBuildingGateway;
+        this.buildingGateway = buildingGateway;
         this.organizationFactory = organizationFactory;
     }
 
@@ -119,7 +117,7 @@ public class OrganizationInteractor implements IOrganizationInputBoundary {
         if (organizationGateway.existsOrgCode(request.getComplexId(), request.getOrgCode())) {
             throw new AppException(ErrorCode.INVALID_REQUEST);
         }
-
+        org.setId(id);
         org.setOrgCode(request.getOrgCode());
         org.setOrgName(request.getOrgName());
         org.setDescription(request.getDescription());
@@ -145,11 +143,11 @@ public class OrganizationInteractor implements IOrganizationInputBoundary {
         // Save updated organization
         Organization updated = organizationGateway.update(org);
 
-        // Delete old org-building relationships
-        orgBuildingGateway.deleteByOrgId(id);
 
         // Create new org-building relationships
         if (request.getBuildingIds() != null && !request.getBuildingIds().isEmpty()) {
+            // Delete old org-building relationships
+            orgBuildingGateway.deleteByOrgId(id);
             List<OrgBuilding> orgBuildings = request.getBuildingIds().stream()
                     .map(buildingId -> new OrgBuilding(id, buildingId))
                     .collect(Collectors.toList());
@@ -169,14 +167,20 @@ public class OrganizationInteractor implements IOrganizationInputBoundary {
         return organizationGateway.getTopLevel(complexId);
     }
 
+    // lay ra cac building ma trong cung 1 cap to chuc chua quan ly toa nha do de them moi/ thay doi su quan ly toa nha
     @Override
-    public List<String> getAvailableBuildingIds(String parentOrgId) { //sua
-        return orgBuildingGateway.getBuildingIdsByParentOrgId(parentOrgId);
+    public List<String> getAvailableBuildingIds(String parentOrgId, String complexId) {
+        List<String> buildingIds = buildingGateway.findByComplexId(complexId).stream()
+                .map(Building::getId)
+                .toList();
+
+        List<String> buildingIdsManaged = orgBuildingGateway.getBuildingIdsByParentOrgId(parentOrgId);
+
+        return buildingIds.stream()
+                .filter(id -> !buildingIdsManaged.contains(id))
+                .toList();
     }
 
-    /**
-     * Convert Organization entity to response DTO
-     */
     private OrganizationResponse mapToResponse(Organization org) {
         OrganizationResponse response = new OrganizationResponse(org.getId(), org.getOrgCode(), org.getOrgName(), org.getComplexId(), org.getParentOrgId(),
                 org.getDescription(), org.getStatus(), org.getLevel());

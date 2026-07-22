@@ -68,4 +68,12 @@ public class JwtUtil {
         }
     }
 
+    public static String getUserId(String token) {
+        try {
+            return parseAndValidate(token).getSubject();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get user id: ", e);
+        }
+    }
+
 }

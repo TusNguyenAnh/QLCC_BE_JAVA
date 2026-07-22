@@ -40,7 +40,7 @@ public class JpaPermission implements IPermissionDsGateway {
     }
 
     private Permission mapToPermission(PermissionDataMapper permissionDataMapper) {
-        return new Permission(permissionDataMapper.getName(), permissionDataMapper.getModule(), permissionDataMapper.getDescription());
+        return new Permission(permissionDataMapper.getId(), permissionDataMapper.getName(), permissionDataMapper.getModule(), permissionDataMapper.getDescription());
     }
 
 }

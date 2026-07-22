@@ -45,7 +45,7 @@ public class SecurityConfig {
 
             "/api/v1/users/create",
             "/api/v1/users/getAll",
-            "/api/v1/users/getOne/{user_id}",
+            "/api/v1/users/getOne/*",
             "/api/v1/image/**",
     };
 
@@ -99,7 +99,7 @@ public class SecurityConfig {
 
     private CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOrigins(List.of("http://localhost:5174", "http://localhost:5173")); // Adjust based on your frontend URL
+        corsConfig.setAllowedOrigins(List.of("http://localhost:5174", "http://localhost:5173","http://mbs.id.vn:5173","http://admin.mbs.id.vn:5173")); // Adjust based on your frontend URL
         corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfig.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         corsConfig.setAllowCredentials(true);

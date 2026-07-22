@@ -8,7 +8,8 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "users")

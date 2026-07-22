@@ -1,17 +1,11 @@
 package com.mbs.qlcc.adapters.db.Token;
 
-import com.mbs.qlcc.adapters.db.Apartment.ApartmentDataMapper;
-import com.mbs.qlcc.adapters.db.User.JpaUser;
 import com.mbs.qlcc.adapters.db.User.JpaUserRepository;
-import com.mbs.qlcc.adapters.db.User.UserDataMapper;
-import com.mbs.qlcc.entities.Apartment.Apartment;
 import com.mbs.qlcc.entities.User.Token;
 import com.mbs.qlcc.entities.User.User;
 import com.mbs.qlcc.usecases.exception.AppException;
 import com.mbs.qlcc.usecases.output.User.ITokenDsGateway;
 import com.mbs.qlcc.usecases.request.Authentication.IntrospectTokenInpRequest;
-import com.mbs.qlcc.usecases.response.Authentication.IntrospectResponse;
-import com.mbs.qlcc.usecases.response.User.TokenResponse;
 import com.mbs.qlcc.utils.ErrorCode;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -29,7 +23,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 

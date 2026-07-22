@@ -13,8 +13,11 @@ import com.mbs.qlcc.usecases.request.Role.CreateRoleInpRequest;
 import com.mbs.qlcc.usecases.response.Organization.OrganizationResponse;
 import com.mbs.qlcc.usecases.response.PageResponse;
 import com.mbs.qlcc.usecases.response.Permission.PermissionResponse;
+import com.mbs.qlcc.usecases.response.Role.IRoleResponse;
 import com.mbs.qlcc.usecases.response.Role.RoleResponse;
 import com.mbs.qlcc.utils.ErrorCode;
+
+import java.util.Map;
 
 public class RoleInteractor implements IRoleInputBoundary {
     private IRoleDsGateway roleDsGateway;
@@ -35,15 +38,8 @@ public class RoleInteractor implements IRoleInputBoundary {
     }
 
     @Override
-    public PageResponse<RoleResponse> getAllRoles(String complexId, int page, int size) {
-        PageResponse<Role> result = roleDsGateway.findByComplexId(complexId, page, size);
-        return new PageResponse<RoleResponse>(
-                result.getData().stream().map(this::mapToResponse).toList(),
-                result.getPage(),
-                result.getSize(),
-                result.getTotalElements(),
-                result.getTotalPages()
-        );
+    public PageResponse<IRoleResponse> getAllRoles(String complexId, int page, int size) {
+        return roleDsGateway.findByComplexId(complexId, page, size);
     }
 
     @Override
@@ -64,6 +60,16 @@ public class RoleInteractor implements IRoleInputBoundary {
             throw new AppException(ErrorCode.NOT_FOUND);
         }
         return orgUser.getRole_id();
+    }
+
+    @Override
+    public Map<String, Integer> getRoleUserCount(String complexId) {
+        return roleDsGateway.countUserById(complexId);
+    }
+
+    @Override
+    public Map<String, Integer> getRolePermissionCount(String complexId) {
+        return roleDsGateway.countRoleById(complexId);
     }
 
     private RoleResponse mapToResponse(Role role) {

@@ -9,7 +9,6 @@ import java.util.Date;
 
 @Entity
 @Table(name = "token")
-@Data
 @Getter
 @Setter
 @AllArgsConstructor

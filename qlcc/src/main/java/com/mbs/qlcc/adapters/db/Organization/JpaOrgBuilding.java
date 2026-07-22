@@ -1,15 +1,13 @@
 package com.mbs.qlcc.adapters.db.Organization;
 
-import com.mbs.qlcc.adapters.db.User.UserDataMapper;
 import com.mbs.qlcc.entities.Organization.OrgBuilding;
-import com.mbs.qlcc.entities.Organization.Organization;
 import com.mbs.qlcc.usecases.output.Organization.IOrgBuildingDsGateway;
+import com.mbs.qlcc.usecases.response.Organization.IOrgBuildingResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 /**
  * OrgBuilding Gateway Implementation
@@ -53,7 +51,7 @@ public class JpaOrgBuilding implements IOrgBuildingDsGateway {
     }
 
     @Override
-    public List<Map<String, Object>> findOrgsByAllBuildings(List<String> buildingIds, Integer buildingCount) {
+    public List<IOrgBuildingResponse> findOrgsByAllBuildings(List<String> buildingIds, Integer buildingCount) {
         return jpaOrgBuildingRepository.findOrgsByAllBuildings(buildingIds, buildingCount);
     }
 

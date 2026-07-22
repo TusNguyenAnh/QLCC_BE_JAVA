@@ -5,7 +5,8 @@ import lombok.*;
 
 @Entity
 @Table(name = "role_permiss")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -14,7 +15,7 @@ public class RolePermissionDataMapper {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
     private String id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "permission_id")
     private PermissionDataMapper permissionDataMapper;
     @ManyToOne

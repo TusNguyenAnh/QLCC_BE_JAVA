@@ -4,6 +4,10 @@ import com.mbs.qlcc.adapters.db.Apartment.ApartmentDataMapper;
 import com.mbs.qlcc.entities.Authentication.Role;
 import com.mbs.qlcc.usecases.output.Role.IRoleDsGateway;
 import com.mbs.qlcc.usecases.response.PageResponse;
+import com.mbs.qlcc.usecases.response.Permission.ICountRoleResponse;
+import com.mbs.qlcc.usecases.response.Role.ICountRolePermissionResponse;
+import com.mbs.qlcc.usecases.response.Role.IRoleResponse;
+import com.mbs.qlcc.usecases.response.Role.IRoleUserResponse;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -31,12 +36,11 @@ public class JpaRole implements IRoleDsGateway {
     }
 
     @Override
-    public PageResponse<Role> findByComplexId(String complexId, int page, int size) {
+    public PageResponse<IRoleResponse> findByComplexId(String complexId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "createdAt");
-        Page<RoleDataMapper> roleDataMappers = jpaRoleRepository.findByComplexIdAndStatus(complexId, false, pageable);
-
+        Page<IRoleResponse> roleDataMappers = jpaRoleRepository.findByComplexIdAndStatus(complexId, false, pageable);
         return new PageResponse<>(
-                roleDataMappers.getContent().stream().map(this::mapToRole).collect(Collectors.toList()),
+                roleDataMappers.getContent(),
                 roleDataMappers.getNumber(),
                 roleDataMappers.getSize(),
                 roleDataMappers.getTotalElements(),
@@ -54,6 +58,18 @@ public class JpaRole implements IRoleDsGateway {
         return jpaRoleRepository.findById(roleId)
                 .map(this::mapToRole)
                 .orElse(null);
+    }
+
+    @Override
+    public Map<String, Integer> countUserById(String complexId) {
+        return jpaRoleRepository.countUserById(complexId).stream()
+                .collect(Collectors.toMap(IRoleUserResponse::getRoleId, IRoleUserResponse::getUserCount));
+    }
+
+    @Override
+    public Map<String, Integer> countRoleById(String complexId) {
+        return jpaRoleRepository.countRoleById(complexId).stream()
+                .collect(Collectors.toMap(ICountRoleResponse::getPermissionId, ICountRoleResponse::getRoleCount));
     }
 
     private Role mapToRole(RoleDataMapper roleDataMapper) {

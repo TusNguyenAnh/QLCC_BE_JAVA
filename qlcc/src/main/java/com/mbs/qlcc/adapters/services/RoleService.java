@@ -6,12 +6,15 @@ import com.mbs.qlcc.usecases.input.IRoleInputBoundary;
 import com.mbs.qlcc.usecases.request.Role.AssignRoleInpRequest;
 import com.mbs.qlcc.usecases.request.Role.CreateRoleInpRequest;
 import com.mbs.qlcc.usecases.response.PageResponse;
+import com.mbs.qlcc.usecases.response.Role.IRoleResponse;
 import com.mbs.qlcc.usecases.response.Role.RoleResponse;
 import com.mbs.qlcc.utils.JwtUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -38,11 +41,21 @@ public class RoleService {
         return useCase.assignRole(assignRoleInpRequest);
     }
 
-    public PageResponse<RoleResponse> getAllRoles(int page, int size){
+    public PageResponse<IRoleResponse> getAllRoles(int page, int size){
         String complexId = JwtUtil.getClaim(JwtUtil.getToken()).get("complex_id").toString();
         return useCase.getAllRoles(complexId, page, size);
     }
     public String getRoleByUserId(String userId,String orgId){
         return useCase.getRoleByUserId(userId,orgId);
     }
+
+    public Map<String, Integer> getRoleUserCount(){
+        String complexId = JwtUtil.getClaim(JwtUtil.getToken()).get("complex_id").toString();
+        return useCase.getRoleUserCount(complexId);
+    }
+    public Map<String, Integer> getRolePermissionCount(){
+        String complexId = JwtUtil.getClaim(JwtUtil.getToken()).get("complex_id").toString();
+        return useCase.getRolePermissionCount(complexId);
+    }
+
 }

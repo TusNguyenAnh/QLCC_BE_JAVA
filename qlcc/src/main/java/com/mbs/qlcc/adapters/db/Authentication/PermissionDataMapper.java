@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "permissions")
-@Data
 @Getter
 @Setter
 @AllArgsConstructor

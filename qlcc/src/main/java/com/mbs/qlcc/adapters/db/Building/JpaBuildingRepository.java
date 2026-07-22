@@ -1,5 +1,6 @@
 package com.mbs.qlcc.adapters.db.Building;
 
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -44,11 +45,13 @@ public interface JpaBuildingRepository extends JpaRepository<BuildingDataMapper,
     List<BuildingDataMapper> findWithRatioByIdInAndComplexId(@Param("ids") List<String> ids, @Param("complexId") String complexId);
 
     // Update financial ratio
+    @Transactional
     @Modifying
     @Query("UPDATE BuildingDataMapper b SET b.financialRatio = :ratio WHERE b.id = :id")
     void updateFinancialRatio(@Param("id") String id, @Param("ratio") Float ratio);
 
     // Soft delete - update status
+    @Transactional
     @Modifying
     @Query("UPDATE BuildingDataMapper b SET b.status = 1, b.deletedAt = CURRENT_TIMESTAMP WHERE b.id IN :ids")
     void softDeleteByIds(@Param("ids") List<String> ids);

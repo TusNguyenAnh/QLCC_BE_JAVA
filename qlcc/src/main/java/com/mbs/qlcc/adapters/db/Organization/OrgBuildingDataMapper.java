@@ -1,10 +1,7 @@
 package com.mbs.qlcc.adapters.db.Organization;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SoftDelete;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -18,7 +15,8 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "org_building")
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

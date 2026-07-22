@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -33,6 +34,8 @@ public class JpaOrgUser implements IOrgUserDsGateway {
                         .userId(o.getUser_id())
                         .orgId(o.getOrg_id())
                         .roleId(o.getRole_id())
+                        .createdAt(LocalDateTime.now())
+                        .updatedAt(LocalDateTime.now())
                         .build())
                 .toList();
 
@@ -50,6 +53,7 @@ public class JpaOrgUser implements IOrgUserDsGateway {
         orgUserDataMapper.setRoleId(orgUser.getRole_id());
         return toOrgUser(repository.save(orgUserDataMapper));
     }
+
     @Transactional
     @Override
     public void deleteOrgUser(List<String> userId, String orgId) {
@@ -63,7 +67,7 @@ public class JpaOrgUser implements IOrgUserDsGateway {
     @Override
     public List<String> getAllUserIdsByOrgId(String orgId, List<String> roleIds) {
         return repository.findByOrgIdAndRoleIdIn(orgId, roleIds).stream()
-                .map(OrgUserDataMapper::getId)
+                .map(OrgUserDataMapper::getUserId)
                 .toList();
     }
 

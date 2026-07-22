@@ -28,7 +28,7 @@ public class OrganizationController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int perPage) {
 
-        var complexId = getCurrentComplexId();
+        String complexId = getCurrentComplexId();
 
         return ApiResponse.<PageResponse<OrganizationResponse>>builder()
                 .result(organizationService.show(complexId, page, Math.min(perPage, 50)))
@@ -54,9 +54,8 @@ public class OrganizationController {
 
     @PostMapping
     public ApiResponse<OrganizationResponse> create(
-            @RequestBody CreateOrganizationRequest request,
-            @RequestParam String complexId) {
-
+            @RequestBody CreateOrganizationRequest request) {
+        String complexId = getCurrentComplexId();
         return ApiResponse.<OrganizationResponse>builder()
                 .result(organizationService.create(complexId, request))
                 .build();
@@ -67,13 +66,13 @@ public class OrganizationController {
     public ApiResponse<OrganizationResponse> update(
             @PathVariable String id,
             @RequestBody UpdateOrganizationRequest request) {
-
+        String complexId = getCurrentComplexId();
         return ApiResponse.<OrganizationResponse>builder()
-                .result(organizationService.update(id, request))
+                .result(organizationService.update(id, request, complexId))
                 .build();
     }
 
-    @DeleteMapping
+    @PostMapping("/delete")
     public ApiResponse<String> delete(@RequestBody List<String> organizationIds) {
         organizationService.delete(organizationIds);
 
@@ -91,10 +90,10 @@ public class OrganizationController {
 
     @GetMapping("/available-buildings")
     public ApiResponse<List<String>> getAvailableBuildingIds(
-            @RequestParam String parentOrgId) {
-
+            @RequestParam String parentId) {
+        String complexId = getCurrentComplexId();
         return ApiResponse.<List<String>>builder()
-                .result(organizationService.getAvailableBuildingIds(parentOrgId))
+                .result(organizationService.getAvailableBuildingIds(parentId, complexId))
                 .build();
     }
 

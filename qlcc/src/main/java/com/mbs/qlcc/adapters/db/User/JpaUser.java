@@ -1,25 +1,28 @@
 package com.mbs.qlcc.adapters.db.User;
 
-import com.mbs.qlcc.adapters.db.Token.TokenDataMapper;
-import com.mbs.qlcc.entities.User.Token;
 import com.mbs.qlcc.entities.User.User;
 import com.mbs.qlcc.usecases.output.User.IUserDsGateway;
+import com.mbs.qlcc.usecases.request.User.UserFilterInpRequest;
 import com.mbs.qlcc.usecases.request.User.UserInpRequest;
+import com.mbs.qlcc.usecases.response.User.IResUserResponse;
+import com.mbs.qlcc.usecases.response.User.IStaffUserResponse;
 import com.mbs.qlcc.utils.StringHelper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Service
 public class JpaUser implements IUserDsGateway {
     final JpaUserRepository repository;
+    final PasswordEncoder encoder;
 
     @Override
     public User findById(String id) {
@@ -52,11 +55,11 @@ public class JpaUser implements IUserDsGateway {
     }
 
     @Override
-    public void storeList(List<UserInpRequest> userInpRequests) {
+    public List<User> storeList(List<UserInpRequest> userInpRequests) {
         List<UserDataMapper> userDataMapper = userInpRequests.stream()
                 .map(req -> UserDataMapper.builder()
                         .username(req.getPhoneNumber())
-                        .passwordHash(req.getPassword())
+                        .passwordHash(encoder.encode(req.getPassword()))
                         .complexId(req.getComplex_id())
                         .resId(req.getResId())
                         .staffId(req.getStaffId())
@@ -66,14 +69,14 @@ public class JpaUser implements IUserDsGateway {
                 )
                 .toList();
 
-        repository.saveAll(userDataMapper);
+        return repository.saveAll(userDataMapper).stream().map(JpaUser::mapToEntity).toList();
     }
 
     @Override
     public User store(UserInpRequest userInpRequests) {
         UserDataMapper userDataMapper = UserDataMapper.builder()
                 .username(userInpRequests.getPhoneNumber())
-                .passwordHash(userInpRequests.getPassword())
+                .passwordHash(encoder.encode(userInpRequests.getPassword()))
                 .complexId(userInpRequests.getComplex_id())
                 .resId(userInpRequests.getResId())
                 .staffId(userInpRequests.getStaffId())
@@ -86,6 +89,49 @@ public class JpaUser implements IUserDsGateway {
     @Override
     public String generatePassword() {
         return StringHelper.generate(6);
+    }
+
+    @Override
+    public List<String> getBuildingIdsManage(String userId) {
+        return repository.findBuildingIdsManage(userId);
+    }
+
+    @Override
+    public List<IStaffUserResponse> findStaffByOrgId(String orgId) {
+        return repository.findStaffByOrgId(orgId);
+    }
+
+    @Override
+    public List<IResUserResponse> findResByOrgId(String orgId) {
+        return repository.findResByOrgId(orgId);
+    }
+
+    @Override
+    public Map<String, String> getUserIdByUsername(Set<String> usernames, String complexId) {
+        List<UserDataMapper> userDataMappers = repository.getUserIdByUsername(usernames, complexId);
+        return userDataMappers.stream().collect(Collectors.toMap(UserDataMapper::getUsername, UserDataMapper::getId));
+    }
+
+    @Override
+    public List<IResUserResponse> filterUser(UserFilterInpRequest request, String complexId) {
+        Map<String, Object> params = new HashMap<>();
+        if (request.getBuildingId() != null && !request.getBuildingId().isEmpty()) {
+            params.put("buildingId", request.getBuildingId());
+        }
+
+        if (request.getFloor() > 0) {
+            params.put("floor", request.getFloor());
+        }
+
+        if (request.getAptNumber() != null && !request.getAptNumber().isEmpty()) {
+            params.put("aptNumber", request.getAptNumber());
+        }
+
+        if (request.getRelationship() != null) {
+            params.put("relationship", request.getRelationship());
+        }
+
+        return repository.filterUser(complexId, params.get("buildingId"), params.get("floor"), params.get("aptNumber"), params.get("relationship"));
     }
 
     public static User mapToEntity(UserDataMapper mapper) {
