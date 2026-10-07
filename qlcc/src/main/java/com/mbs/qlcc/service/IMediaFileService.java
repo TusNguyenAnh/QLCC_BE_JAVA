@@ -8,5 +8,5 @@ import java.util.Map;
 
 public interface IMediaFileService {
     void create(List<MultipartFile> files, String ownerType, String ownerId) throws IOException;
-    Map<String, List<String>> findByOwnerId(String ownerId);
+    Map<String, List<String>> findByOwnerId(List<String> ownerId);
 }

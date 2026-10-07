@@ -1,0 +1,54 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+      format_sql: true
+      dialect: org.hibernate.dialect.MySQL8Dialect
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  servlet:
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE} #dung luong tren 1 file
+      max-request-size: ${MAX_REQUEST_SIZE} #tong dung luong request
+
+#config swagger
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /api  #la thong tin chi tiet cua req va doi tuong dto
+  show-actuator: true
+
+
+jwt:
+  signerKey: ${JWT_SECRET}
+  validDuration: 18000 # in second - 5 hours
+  refreshableDuration: 36000 # in seconds - 10 hours
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG                    # Hiển thị câu SQL thực thi
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE  # Hiển thị giá trị tham số
+    org.hibernate.orm.results: DEBUG            # Hiển thị mapping result
+    org.springframework.orm.jpa: DEBUG
+    org.springframework.security: DEBUG
+
+

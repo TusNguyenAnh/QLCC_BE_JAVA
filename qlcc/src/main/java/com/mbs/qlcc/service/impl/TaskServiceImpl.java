@@ -71,7 +71,7 @@ public class TaskServiceImpl implements ITaskService {
         try {
             TaskType taskType = taskTypeRepository.findByIdAndDeletedAtIsNull(request.getTasktypeId())
                     .orElseThrow(() -> new AppException(ErrorCode.TASK_INFO_INVALID));
-                                // Lay ra wf cua task
+            // Lay ra wf cua task
             String wfId = taskType.getWorkflow().getId();
 
             // lay ra cac buoc xet duyet cua task
@@ -176,16 +176,23 @@ public class TaskServiceImpl implements ITaskService {
     @Override
     public PageResponse<ITaskOrgResponse> getTasksByOrgId(TaskFilterRequest request, String approverId, String orgId, int status) {
         String taskStatus = status == 2 ? Constant.PENDING.getValue() : Constant.REJECT.getValue();
+        int pageNumber = request.getPageNumber() > 0 ? request.getPageNumber() - 1 : 0;
+
         Sort.Direction direction = "ASC".equalsIgnoreCase(request.getOrder()) ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(request.getPageNumber(), request.getPageSize(), Sort.by(direction, "created_at"));
+        Pageable pageable = PageRequest.of(pageNumber, request.getPageSize(), Sort.by(direction, "created_at"));
 
         Object priorityIds = (request.getPriorityId() != null && !request.getPriorityId().isEmpty()) ? request.getPriorityId() : null;
+        String checkPriority = (request.getPriorityId() != null && !request.getPriorityId().isEmpty()) ? "priorityIds" : null;
         Object taskTypeIds = (request.getTaskTypeId() != null && !request.getTaskTypeId().isEmpty()) ? request.getTaskTypeId() : null;
+        String checkTaskType = (request.getTaskTypeId() != null && !request.getTaskTypeId().isEmpty()) ? "taskTypeIds" : null;
+
 
         Page<ITaskOrgResponse> pageResult = taskRepository.getByOrgId(
                 orgId,
                 taskStatus,
                 approverId,
+                checkPriority,
+                checkTaskType,
                 priorityIds,
                 taskTypeIds,
                 request.getTimeApprovedStart(),
@@ -206,15 +213,20 @@ public class TaskServiceImpl implements ITaskService {
 
     @Override
     public PageResponse<ITaskOrgResponse> getTasksByCreator(TaskFilterRequest request, String creator, String status) {
+        int pageNumber = request.getPageNumber() > 0 ? request.getPageNumber() - 1 : 0;
         Sort.Direction direction = "ASC".equalsIgnoreCase(request.getOrder()) ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(request.getPageNumber(), request.getPageSize(), Sort.by(direction, "t.created_at"));
+        Pageable pageable = PageRequest.of(pageNumber, request.getPageSize(), Sort.by(direction, "created_at"));
 
         Object priorityIds = (request.getPriorityId() != null && !request.getPriorityId().isEmpty()) ? request.getPriorityId() : null;
         Object taskTypeIds = (request.getTaskTypeId() != null && !request.getTaskTypeId().isEmpty()) ? request.getTaskTypeId() : null;
+        String checkPriority = (request.getPriorityId() != null && !request.getPriorityId().isEmpty()) ? "priorityIds" : null;
+        String checkTaskType = (request.getTaskTypeId() != null && !request.getTaskTypeId().isEmpty()) ? "taskTypeIds" : null;
 
         Page<ITaskOrgResponse> pageResult = taskRepository.getByCreator(
                 creator,
                 status,
+                checkPriority,
+                checkTaskType,
                 priorityIds,
                 taskTypeIds,
                 request.getTimeApprovedStart(),
@@ -241,8 +253,9 @@ public class TaskServiceImpl implements ITaskService {
                     .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
 
             String currentOrgId = existingTask.getCurrentOrgId();
-            TaskHistory existingTaskHistory = taskHistoryRepository.findByTaskIdAndOrgIdAndApproverId(taskId, currentOrgId, approverId);
-            if (existingTaskHistory == null) {
+            boolean isStepOrder = existingTask.getCurrentStep() != request.getStepOrder();
+            TaskHistory existingTaskHistory = taskHistoryRepository.findByTaskIdAndOrgIdAndApproverIdAndStepOrder(taskId, currentOrgId, approverId, request.getStepOrder());
+            if (existingTaskHistory == null || !existingTaskHistory.getAction().equals(Constant.PENDING.getValue()) || isStepOrder) {
                 throw new AppException(ErrorCode.NOT_FOUND);
             }
 
@@ -271,28 +284,6 @@ public class TaskServiceImpl implements ITaskService {
                     existingTask.setStatus(Constant.PENDING.getValue());
                 } else {
                     existingTask.setStatus(Constant.APPROVED.getValue());
-
-                    // xu ly phan nay ????
-                    List<Expense> exitTaskExpense = expenseRepository.findByTaskId(taskId);
-                    List<Revenue> exitTaskRevenue = revenueRepository.findByTaskId(taskId);
-
-                    if (!exitTaskExpense.isEmpty()) {
-                        exitTaskExpense.forEach(expense -> {
-                            expense.setApproved(1);
-                            expense.setApprovedAt(LocalDateTime.now());
-                            expense.setApprovedBy(approverId);
-                        });
-                        expenseRepository.saveAll(exitTaskExpense);
-                    }
-
-                    if (!exitTaskRevenue.isEmpty()) {
-                        exitTaskRevenue.forEach(revenue -> {
-                            revenue.setApproved(1);
-                            revenue.setApprovedAt(LocalDateTime.now());
-                            revenue.setApprovedBy(approverId);
-                        });
-                        revenueRepository.saveAll(exitTaskRevenue);
-                    }
                 }
                 taskRepository.save(existingTask);
             }
@@ -311,12 +302,14 @@ public class TaskServiceImpl implements ITaskService {
                     .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
 
             String currentOrgId = existingTask.getCurrentOrgId();
+            boolean isStepOrder = existingTask.getCurrentStep() != request.getStepOrder();
+
             List<TaskHistory> taskHistoriesForReject = taskHistoryRepository.findTaskForReject(taskId, existingTask.getCurrentStep());
             taskHistoriesForReject.forEach(th -> th.setAction(Constant.UNFINISHED.getValue()));
             taskHistoryRepository.saveAll(taskHistoriesForReject);
 
-            TaskHistory existingTaskHistory = taskHistoryRepository.findByTaskIdAndOrgIdAndApproverId(taskId, currentOrgId, approverId);
-            if (existingTaskHistory == null) {
+            TaskHistory existingTaskHistory = taskHistoryRepository.findByTaskIdAndOrgIdAndApproverIdAndStepOrder(taskId, currentOrgId, approverId, request.getStepOrder());
+            if (existingTaskHistory == null || !existingTaskHistory.getAction().equals(Constant.PENDING.getValue()) || isStepOrder) {
                 throw new AppException(ErrorCode.NOT_FOUND);
             }
 
@@ -346,15 +339,21 @@ public class TaskServiceImpl implements ITaskService {
     @Override
     public PageResponse<ITaskOrgResponse> filterTaskApproved(TaskFilterRequest request, String approverId, String orgId, String status) {
         Sort.Direction direction = "ASC".equalsIgnoreCase(request.getOrder()) ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(request.getPageNumber(), request.getPageSize(), Sort.by(direction, "t.updated_at"));
+        int pageNumber = request.getPageNumber() > 0 ? request.getPageNumber() - 1 : 0;
+
+        Pageable pageable = PageRequest.of(pageNumber, request.getPageSize(), Sort.by(direction, "updated_at"));
 
         Object priorityIds = (request.getPriorityId() != null && !request.getPriorityId().isEmpty()) ? request.getPriorityId() : null;
         Object taskTypeIds = (request.getTaskTypeId() != null && !request.getTaskTypeId().isEmpty()) ? request.getTaskTypeId() : null;
+        String checkPriority = (request.getPriorityId() != null && !request.getPriorityId().isEmpty()) ? "priorityIds" : null;
+        String checkTaskType = (request.getTaskTypeId() != null && !request.getTaskTypeId().isEmpty()) ? "taskTypeIds" : null;
 
         Page<ITaskOrgResponse> pageResult = taskHistoryRepository.filterTaskApproved(
                 orgId,
                 status,
                 approverId,
+                checkPriority,
+                checkTaskType,
                 priorityIds,
                 taskTypeIds,
                 request.getTimeApprovedStart(),

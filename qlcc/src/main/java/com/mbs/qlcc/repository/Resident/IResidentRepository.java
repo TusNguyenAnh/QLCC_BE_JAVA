@@ -1,8 +1,8 @@
 package com.mbs.qlcc.repository.Resident;
 
 import com.mbs.qlcc.domain.Resident;
-import com.mbs.qlcc.dto.response.IResAptBd;
-import com.mbs.qlcc.dto.response.IResUser;
+import com.mbs.qlcc.dto.response.Resident.IResAptBd;
+import com.mbs.qlcc.dto.response.Resident.IResUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 @Repository
 public interface IResidentRepository extends JpaRepository<Resident, String>,

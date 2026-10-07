@@ -36,7 +36,7 @@ public class TaskHistory {
     @Column(name = "action", nullable = false)
     private String action;
 
-    @Column(name = "comment", nullable = false)
+    @Column(name = "comment")
     private String comment;
 
     @Column(name = "is_deleted")

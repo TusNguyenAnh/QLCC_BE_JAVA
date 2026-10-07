@@ -18,7 +18,7 @@ public interface ITaskRepository extends JpaRepository<Task, String> {
 
     @Query(value = "SELECT t.id as id, t.complex_id as complexId, t.tasktype_id as taskTypeId, t.current_org_id as currentOrgId, " +
             "t.creator as creator, t.current_step as currentStep, t.task_name as taskName, t.description as description, " +
-            "t.status as status, t.category as category, tt.type_name as typeName, p.priority_name as priorityName, " +
+            "t.status as status, t.category as category,t.created_at as createdAt, tt.type_name as typeName, p.priority_name as priorityName, " +
             "u.username as username, r.phone_number as phoneNumber, r.fullname as fullName, a.apt_number as aptNumber, " +
             "b.building_name as buildingName, o.level as level " +
             "FROM task t " +
@@ -35,8 +35,8 @@ public interface ITaskRepository extends JpaRepository<Task, String> {
             "AND t.current_step = th.step_order " +
             "AND th.action = :status " +
             "AND th.approver_id = :approverId " +
-            "AND (:priorityIds IS NULL OR p.id IN (:priorityIds)) " +
-            "AND (:taskTypeIds IS NULL OR t.tasktype_id IN (:taskTypeIds)) " +
+            "AND (:checkPriority IS NULL OR p.id IN (:priorityIds)) " +
+            "AND (:checkTaskType IS NULL OR t.tasktype_id IN (:taskTypeIds)) " +
             "AND (:approvedStart IS NULL OR t.updated_at >= :approvedStart) " +
             "AND (:approvedEnd IS NULL OR t.updated_at <= :approvedEnd) " +
             "AND (:requestStart IS NULL OR t.created_at >= :requestStart) " +
@@ -57,13 +57,14 @@ public interface ITaskRepository extends JpaRepository<Task, String> {
                     "AND (:requestStart IS NULL OR t.created_at >= :requestStart) " +
                     "AND (:requestEnd IS NULL OR t.created_at <= :requestEnd) ", nativeQuery = true)
     Page<ITaskOrgResponse> getByOrgId(@Param("orgId") String orgId, @Param("status") String status, @Param("approverId") String approverId,
+                                      @Param("checkPriority") String checkPriority, @Param("checkTaskType") String checkTaskType,
                                       @Param("priorityIds") Object priorityIds, @Param("taskTypeIds") Object taskTypeIds,
                                       @Param("approvedStart") Object approvedStart, @Param("approvedEnd") Object approvedEnd,
                                       @Param("requestStart") Object requestStart, @Param("requestEnd") Object requestEnd, Pageable pageable);
 
     @Query(value = "SELECT t.id as id, t.complex_id as complexId, t.tasktype_id as taskTypeId, t.current_org_id as currentOrgId, " +
             "t.creator as creator, t.current_step as currentStep, t.task_name as taskName, t.description as description, " +
-            "t.status as status, t.category as category, tt.type_name as typeName, p.priority_name as priorityName, " +
+            "t.status as status, t.category as category, t.created_at as createdAt, tt.type_name as typeName, p.priority_name as priorityName, " +
             "u.username as username, r.phone_number as phoneNumber, r.fullname as fullName, a.apt_number as aptNumber, " +
             "b.building_name as buildingName " +
             "FROM task t " +
@@ -77,8 +78,8 @@ public interface ITaskRepository extends JpaRepository<Task, String> {
             "WHERE t.creator = :creator " +
             "AND t.status = :status " +
             "AND t.category = 'task' " +
-            "AND (:priorityIds IS NULL OR p.id IN (:priorityIds)) " +
-            "AND (:taskTypeIds IS NULL OR t.tasktype_id IN (:taskTypeIds)) " +
+            "AND (:checkPriority IS NULL OR p.id IN (:priorityIds)) " +
+            "AND (:checkTaskType IS NULL OR t.tasktype_id IN (:taskTypeIds)) " +
             "AND (:approvedStart IS NULL OR t.updated_at >= :approvedStart) " +
             "AND (:approvedEnd IS NULL OR t.updated_at <= :approvedEnd) " +
             "AND (:requestStart IS NULL OR t.created_at >= :requestStart) " +
@@ -97,6 +98,7 @@ public interface ITaskRepository extends JpaRepository<Task, String> {
                     "AND (:requestStart IS NULL OR t.created_at >= :requestStart) " +
                     "AND (:requestEnd IS NULL OR t.created_at <= :requestEnd) ", nativeQuery = true)
     Page<ITaskOrgResponse> getByCreator(@Param("creator") String creator, @Param("status") String status,
+                                        @Param("checkPriority") String checkPriority, @Param("checkTaskType") String checkTaskType,
                                         @Param("priorityIds") Object priorityIds, @Param("taskTypeIds") Object taskTypeIds,
                                         @Param("approvedStart") Object approvedStart, @Param("approvedEnd") Object approvedEnd,
                                         @Param("requestStart") Object requestStart, @Param("requestEnd") Object requestEnd, Pageable pageable);

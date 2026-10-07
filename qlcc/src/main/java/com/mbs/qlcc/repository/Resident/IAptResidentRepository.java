@@ -1,7 +1,7 @@
 package com.mbs.qlcc.repository.Resident;
 
 import com.mbs.qlcc.domain.AptResident;
-import com.mbs.qlcc.dto.response.IResUser;
+import com.mbs.qlcc.dto.response.Resident.IResUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

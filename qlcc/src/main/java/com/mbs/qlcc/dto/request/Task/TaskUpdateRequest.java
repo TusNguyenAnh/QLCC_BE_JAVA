@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class TaskUpdateRequest {
     private String action;
     private String comment;
+    private int stepOrder;
 }

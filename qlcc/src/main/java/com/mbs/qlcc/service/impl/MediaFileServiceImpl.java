@@ -52,7 +52,7 @@ public class MediaFileServiceImpl implements IMediaFileService {
     }
 
     @Override
-    public Map<String, List<String>> findByOwnerId(String ownerId) {
+    public Map<String, List<String>> findByOwnerId(List<String> ownerId) {
         Map<String, List<String>> result = new HashMap<>();
         result.put("image", new ArrayList<>());
         result.put("video", new ArrayList<>());

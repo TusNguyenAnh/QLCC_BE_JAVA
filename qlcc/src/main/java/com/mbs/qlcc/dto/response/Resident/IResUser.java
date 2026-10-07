@@ -1,4 +1,4 @@
-package com.mbs.qlcc.dto.response;
+package com.mbs.qlcc.dto.response.Resident;
 
 import java.time.LocalDateTime;
 

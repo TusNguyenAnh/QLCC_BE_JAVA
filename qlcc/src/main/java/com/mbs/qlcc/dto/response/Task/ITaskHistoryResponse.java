@@ -22,6 +22,7 @@ public interface ITaskHistoryResponse {
     Integer getLevel();
 
     String getWorkflowName();
+    String getModuleCode();
 
     String getFullname();
 }
