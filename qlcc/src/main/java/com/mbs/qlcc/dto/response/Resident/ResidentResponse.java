@@ -1,5 +1,6 @@
 package com.mbs.qlcc.dto.response.Resident;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 public class ResidentResponse {
@@ -13,8 +14,8 @@ public class ResidentResponse {
     private String phoneNumber;
     private String cccd;
     private int status;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private Instant createdAt;
+    private Instant updatedAt;
 
     public ResidentResponse() {}
 
@@ -32,7 +33,7 @@ public class ResidentResponse {
 
     public ResidentResponse(String id, String complexId, String fullname, int gender, String email,
                             LocalDateTime birthday, String relationship, String phoneNumber, String cccd,
-                            int status, LocalDateTime createdAt, LocalDateTime updatedAt) {
+                            int status, Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.complexId = complexId;
         this.fullname = fullname;
@@ -77,9 +78,9 @@ public class ResidentResponse {
     public int getStatus() { return status; }
     public void setStatus(int status) { this.status = status; }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public Instant getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
 
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public Instant getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
 }

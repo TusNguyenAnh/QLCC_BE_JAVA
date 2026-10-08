@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "users")
 @Entity
-public class User {
+public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
@@ -34,18 +34,6 @@ public class User {
 
     @Column(name = "staff_id", length = 100)
     String staffId;
-
-    @Column(name = "created_at")
-    //@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
-    LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    //@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
-    LocalDateTime updatedAt;
-
-    @Column(name = "deleted_at")
-    //@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
-    LocalDateTime deletedAt;
 
     @Column(name = "is_deleted")
     boolean isDeleted = false;

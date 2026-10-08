@@ -80,8 +80,6 @@ public class UserServiceImpl implements IUserService {
                         .complexId(complexId)
                         .resId(r.getId()) // Giả sử r.getId() là resId
                         .staffId("")
-                        .createdAt(LocalDateTime.now())
-                        .updatedAt(LocalDateTime.now())
                         .build();
                 usersToSave.add(user);
             }
@@ -94,8 +92,6 @@ public class UserServiceImpl implements IUserService {
                         .userId(us.getId())
                         .orgId("") // Cần xác định orgId đúng
                         .roleId("") // Cần xác định roleId đúng
-                        .createdAt(LocalDateTime.now())
-                        .updatedAt(LocalDateTime.now())
                         .build();
                 orgUsers.add(orgUser);
             }

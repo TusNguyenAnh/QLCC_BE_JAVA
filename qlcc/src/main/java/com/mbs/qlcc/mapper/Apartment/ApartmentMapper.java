@@ -48,7 +48,6 @@ public class ApartmentMapper {
                 .aptType(request.getAptType())
                 .description(request.getDescription())
                 .status(0)
-                .createdAt(LocalDateTime.now())
                 .build();
     }
 

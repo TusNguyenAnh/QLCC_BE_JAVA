@@ -35,6 +35,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -123,7 +124,7 @@ public class ComplexServiceImpl implements IComplexService {
         List<Complex> complexes = complexRepository.findAllByStatusAndIdIn(0, request.getIds());
         complexes.forEach(c -> {
             c.setStatus(1);
-            c.setUpdatedAt(LocalDateTime.now());
+            c.setUpdatedAt(Instant.now());
         });
         List<Complex> approved = complexRepository.saveAll(complexes);
 
@@ -135,8 +136,8 @@ public class ComplexServiceImpl implements IComplexService {
                 String passwordRaw = "1"; //userDsGateway.generatePassword();
                 User userInp = UserMapper.toEntity(new UserRequest(c.getPhoneContact(), passwordRaw, "", c.getNameContact(), c.getEmailContact(), c.getId(), "", ""));
                 userInp.setPasswordHash(encoder.encode(passwordRaw));
-                userInp.setCreatedAt(LocalDateTime.now());
-                userInp.setUpdatedAt(LocalDateTime.now());
+                userInp.setCreatedAt(Instant.now());
+                userInp.setUpdatedAt(Instant.now());
                 User user = userRepository.save(userInp);
 
                 //gan role cho acc
@@ -144,8 +145,6 @@ public class ComplexServiceImpl implements IComplexService {
                         .userId(user.getId())
                         .orgId("")
                         .roleId(roleAdminId)
-                        .createdAt(LocalDateTime.now())
-                        .updatedAt(LocalDateTime.now())
                         .build();
                 orgUserRepository.save(orgUser);
 
@@ -169,8 +168,8 @@ public class ComplexServiceImpl implements IComplexService {
         List<Complex> complexes = complexRepository.findAllByStatusAndIdIn(0, request.getIds());
         complexes.forEach(c -> {
             c.setStatus(2);
-            c.setUpdatedAt(LocalDateTime.now());
-            c.setDeletedAt(LocalDateTime.now());
+            c.setUpdatedAt(Instant.now());
+            c.setDeletedAt(Instant.now());
         });
         complexRepository.saveAll(complexes);
     }

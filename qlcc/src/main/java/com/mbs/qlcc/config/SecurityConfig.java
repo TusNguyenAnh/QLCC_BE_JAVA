@@ -55,8 +55,6 @@ public class SecurityConfig {
             //complex
             "/api/v1/complex",
             "/api/v1/complex/filter/*",
-            "/api/v1/complex",
-
     };
 
     @Autowired

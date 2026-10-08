@@ -25,6 +25,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -145,7 +146,7 @@ public class ApartmentServiceImpl implements IApartmentService {
 
         apartment.setAptType(request.getAptType());
         apartment.setDescription(request.getDescription());
-        apartment.setUpdatedAt(LocalDateTime.now());
+        apartment.setUpdatedAt(Instant.now());
 
         Apartment updated = apartmentRepository.save(apartment);
 

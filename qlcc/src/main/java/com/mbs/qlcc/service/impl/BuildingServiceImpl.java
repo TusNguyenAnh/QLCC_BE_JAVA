@@ -21,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -96,7 +97,7 @@ public class BuildingServiceImpl implements IBuildingService {
         if (request.getFinancialRatio() != null) {
             building.setFinancialRatio(request.getFinancialRatio());
         }
-        building.setUpdatedAt(LocalDateTime.now());
+        building.setUpdatedAt(Instant.now());
 
         Building updated = buildingRepository.save(building);
         return BuildingMapper.toResponse(updated);
@@ -114,7 +115,7 @@ public class BuildingServiceImpl implements IBuildingService {
             throw new AppException(ErrorCode.BUILDING_NOT_FOUND);
         }
 
-        LocalDateTime now = LocalDateTime.now();
+        Instant now = Instant.now();
         for (Building building : buildings) {
             building.setDeletedAt(now);
             building.setStatus(1);
@@ -166,7 +167,7 @@ public class BuildingServiceImpl implements IBuildingService {
             Float ratio = ratioMap.get(building.getId());
             if (ratio != null) {
                 building.setFinancialRatio(ratio);
-                building.setUpdatedAt(LocalDateTime.now());
+                building.setUpdatedAt(Instant.now());
             }
         }
 

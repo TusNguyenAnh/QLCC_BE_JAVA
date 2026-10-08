@@ -20,8 +20,6 @@ public final class ResidentMapper {
                 .phoneNumber(request.getPhoneNumber())
                 .cccd(request.getCccd())
                 .status(0)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
                 .build();
     }
 

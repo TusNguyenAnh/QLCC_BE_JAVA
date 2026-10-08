@@ -1,5 +1,7 @@
 package com.mbs.qlcc.dto.response.Task;
 
+import java.time.Instant;
+
 public interface ITaskOrgResponse {
     String getId();
 
@@ -20,7 +22,7 @@ public interface ITaskOrgResponse {
     String getStatus(); // 'PENDING', 'APPROVED', 'REJECTED','UNFINISHED'
 
     String getCategory();
-    String getCreatedAt();
+    Instant getCreatedAt();
     String getTypeName();
 
     String getPriorityName();

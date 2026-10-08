@@ -26,6 +26,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -49,8 +50,6 @@ public class RoleServiceImpl implements IRoleService {
                 .complexId(complexId)
                 .description(request.getDescription())
                 .status(false)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
                 .build();
 
         Role saved = roleRepository.save(role);
@@ -80,7 +79,7 @@ public class RoleServiceImpl implements IRoleService {
             throw new AppException(ErrorCode.NOT_FOUND);
         }
         orgUser.setRoleId(request.getRoleId());
-        orgUser.setUpdatedAt(LocalDateTime.now());
+        orgUser.setUpdatedAt(Instant.now());
         orgUserRepository.save(orgUser);
         return "Role assigned successfully";
     }

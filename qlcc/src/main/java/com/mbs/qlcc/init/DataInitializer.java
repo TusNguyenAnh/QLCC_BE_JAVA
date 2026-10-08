@@ -159,8 +159,6 @@ public class DataInitializer {
                 .name(name)
                 .module(module)
                 .description(description)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
                 .build();
     }
 
@@ -168,8 +166,6 @@ public class DataInitializer {
         return Role.builder()
                 .roleName(roleName)
                 .complexId("")
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
                 .build();
     }
 
@@ -179,8 +175,6 @@ public class DataInitializer {
                 .complexId("")
                 .username(username)
                 .passwordHash(encoder.encode("123"))
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
                 .build();
     }
 
@@ -196,8 +190,6 @@ public class DataInitializer {
                 .userId(userId)
                 .roleId(roleId)
                 .orgId("")
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
                 .build();
     }
 
@@ -205,8 +197,6 @@ public class DataInitializer {
         return FinancialModel.builder()
                 .name(name)
                 .type(type)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
                 .build();
     }
 
@@ -215,8 +205,6 @@ public class DataInitializer {
                 .priorityName(priorityName)
                 .description(description)
                 .weight(weight)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
                 .build();
     }
 }

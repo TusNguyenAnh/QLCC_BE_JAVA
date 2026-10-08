@@ -25,6 +25,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -103,8 +104,6 @@ public class OrganizationServiceImpl implements IOrganizationService {
                 .description(request.getDescription())
                 .level(level)
                 .status("0")
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
                 .build();
 
         Organization saved = organizationRepository.save(org);
@@ -139,7 +138,7 @@ public class OrganizationServiceImpl implements IOrganizationService {
         org.setOrgCode(request.getOrgCode());
         org.setOrgName(request.getOrgName());
         org.setDescription(request.getDescription());
-        org.setUpdatedAt(LocalDateTime.now());
+        org.setUpdatedAt(Instant.now());
 
         // Handle parent organization change
         if (request.getParentOrgId() != null && !request.getParentOrgId().isEmpty()
@@ -180,7 +179,7 @@ public class OrganizationServiceImpl implements IOrganizationService {
         List<Organization> orgs = organizationRepository.findAllById(organizationIds);
         orgs.forEach(org -> {
             org.setStatus("1"); // Soft delete
-            org.setDeletedAt(LocalDateTime.now());
+            org.setDeletedAt(Instant.now());
         });
         organizationRepository.saveAll(orgs);
     }

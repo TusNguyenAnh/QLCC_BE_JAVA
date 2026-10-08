@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 public class BuildingResponse {
@@ -14,13 +15,13 @@ public class BuildingResponse {
     private String buildingName;
     private int status;
     private Float financialRatio;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private Instant createdAt;
+    private Instant updatedAt;
 
     public BuildingResponse() {
     }
 
-    public BuildingResponse(String complexId, String buildingName, int status, Float financialRatio, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public BuildingResponse(String complexId, String buildingName, int status, Float financialRatio, Instant createdAt, Instant updatedAt) {
         this.complexId = complexId;
         this.buildingName = buildingName;
         this.status = status;
@@ -29,7 +30,7 @@ public class BuildingResponse {
         this.updatedAt = updatedAt;
     }
 
-    public BuildingResponse(String id, String complexId, String buildingName, int status, Float financialRatio, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public BuildingResponse(String id, String complexId, String buildingName, int status, Float financialRatio, Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.complexId = complexId;
         this.buildingName = buildingName;
@@ -79,19 +80,19 @@ public class BuildingResponse {
         this.financialRatio = financialRatio;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalDateTime getUpdatedAt() {
+    public Instant getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
+    public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
     }
 }

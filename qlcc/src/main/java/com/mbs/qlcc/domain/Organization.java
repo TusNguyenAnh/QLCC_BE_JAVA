@@ -8,13 +8,12 @@ import java.util.List;
 
 @Entity
 @Table(name = "organization")
-@Data
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Organization {
+public class Organization extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
@@ -40,15 +39,6 @@ public class Organization {
 
     @Column
     private String status;
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
 
     @Column(name = "is_deleted")
     private boolean isDeleted = false;

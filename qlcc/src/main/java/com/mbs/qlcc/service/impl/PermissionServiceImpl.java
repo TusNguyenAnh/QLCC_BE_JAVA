@@ -37,8 +37,6 @@ public class PermissionServiceImpl implements IPermissionService {
                 .name(request.getName())
                 .module(request.getModule())
                 .description(request.getDescription())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
                 .build();
 
         Permission saved = permissionRepository.save(permission);
