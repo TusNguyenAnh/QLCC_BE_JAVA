@@ -1,31 +1,17 @@
 package com.mbs.qlcc.dto.response.Expense;
 
+import java.math.BigDecimal;
+import java.time.Instant;
+
 public interface IExpenseFilterResponse {
     String getId();
 
-    String getTaskId();
-
-    String getBuildingId();
-
     String getCategory();
 
-    String getTitle();
-
-    String getOriginalAmount();
-
-    String getAmountPaid();
-
-    String getVendor();
-
-    String getStatus();
+    BigDecimal getAmount();
 
     String getDescription();
 
-    String getCreatedBy();
-
-    String getApprovedBy();
-
-    Integer getApproved();
-
-    String getApprovedAt();
+    Instant getPayDate();
+    String getTaskId();
 }
