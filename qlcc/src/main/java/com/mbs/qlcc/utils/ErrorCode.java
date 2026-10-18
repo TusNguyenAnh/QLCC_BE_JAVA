@@ -224,6 +224,15 @@ public enum ErrorCode {
 
     // Apartment Errors (Additional)
     APARTMENT_NOT_FOUND(4110, "Căn hộ không tồn tại", HttpStatus.NOT_FOUND),
+
+    // Brief Errors
+    BRIEF_NAME_EXISTED(9200, "Tên file đã tồn tại cho loại brief này trong chung cư", HttpStatus.CONFLICT),
+    BRIEF_NOT_FOUND(9201, "Hồ sơ không tồn tại", HttpStatus.NOT_FOUND),
+    BRIEF_NAME_NOT_EMPTY(9202, "Tên file không được để trống", HttpStatus.BAD_REQUEST),
+    BRIEF_TYPE_NOT_EMPTY(9203, "Loại brief không được để trống", HttpStatus.BAD_REQUEST),
+    FILE_NOT_ALLOWED(9204, "Định dạng file hoặc nội dung file không hợp lệ", HttpStatus.BAD_REQUEST),
+    FILE_STORAGE_ERROR(9205, "Lỗi trong quá trình lưu trữ hoặc xử lý file", HttpStatus.INTERNAL_SERVER_ERROR),
+    FILE_NOT_FOUND(9206, "File không tồn tại trên hệ thống", HttpStatus.NOT_FOUND),
     ;
 
     private int code;
