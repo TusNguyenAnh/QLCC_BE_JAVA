@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -25,8 +26,8 @@ public class BuildingController {
 
     @PostMapping
     public ApiResponse<BuildingResponse> create(
-            @RequestBody CreateBuildingRequest request
-    ) {
+            @ModelAttribute CreateBuildingRequest request
+    ) throws IOException {
         return ApiResponse.<BuildingResponse>builder()
                 .result(buildingService.create(request))
                 .build();

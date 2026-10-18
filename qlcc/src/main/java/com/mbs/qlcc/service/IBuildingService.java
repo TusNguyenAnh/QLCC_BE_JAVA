@@ -6,11 +6,12 @@ import com.mbs.qlcc.dto.request.Building.UpdateRatioRequest;
 import com.mbs.qlcc.dto.response.Building.BuildingResponse;
 import com.mbs.qlcc.dto.response.PageResponse;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface IBuildingService {
 
-    BuildingResponse create(CreateBuildingRequest request);
+    BuildingResponse create(CreateBuildingRequest request) throws IOException;
 
     BuildingResponse findById(String id);
 

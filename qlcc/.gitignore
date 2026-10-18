@@ -36,6 +36,7 @@ build/
 *.md
 .vscode/
 /src/main/resources/application-local.yml
+/src/main/resources/application.yml
 /mvnw
 /mvnw.cmd
 /.mvn/wrapper/maven-wrapper.properties

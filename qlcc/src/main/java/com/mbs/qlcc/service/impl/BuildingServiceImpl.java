@@ -10,6 +10,7 @@ import com.mbs.qlcc.exception.AppException;
 import com.mbs.qlcc.mapper.Building.BuildingMapper;
 import com.mbs.qlcc.repository.Building.IBuildingRepository;
 import com.mbs.qlcc.service.IBuildingService;
+import com.mbs.qlcc.service.IMediaFileService;
 import com.mbs.qlcc.utils.ErrorCode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,16 +35,21 @@ import java.util.stream.Collectors;
 public class BuildingServiceImpl implements IBuildingService {
 
     IBuildingRepository buildingRepository;
+    IMediaFileService mediaFileService;
 
     @Override
     @Transactional
-    public BuildingResponse create(CreateBuildingRequest request) {
+    public BuildingResponse create(CreateBuildingRequest request) throws IOException {
         if (buildingRepository.existsByBuildingNameAndComplexIdAndDeletedAtIsNull(request.getBuildingName(), request.getComplexId())) {
             throw new AppException(ErrorCode.BUILDING_NAME_EXISTS);
         }
 
         Building building = BuildingMapper.toEntity(request, request.getComplexId());
         Building saved = buildingRepository.save(building);
+
+        if (request.getFiles() != null && !request.getFiles().isEmpty()) {
+            mediaFileService.create(request.getFiles(), "building", saved.getId());
+        }
 
         return BuildingMapper.toResponse(saved);
     }

@@ -2,22 +2,31 @@ package com.mbs.qlcc.service.impl;
 
 import com.mbs.qlcc.domain.MediaFile;
 import com.mbs.qlcc.dto.request.MediaFile.MediaFileRequest;
+import com.mbs.qlcc.exception.AppException;
 import com.mbs.qlcc.mapper.MediaFile.MediaFileMapper;
 import com.mbs.qlcc.repository.MediaFile.IMediaFileRepository;
 import com.mbs.qlcc.service.IMediaFileService;
+import com.mbs.qlcc.utils.ErrorCode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -28,6 +37,10 @@ public class MediaFileServiceImpl implements IMediaFileService {
 
     @Override
     public void create(List<MultipartFile> files, String ownerType, String ownerId) throws IOException {
+        if (files == null || files.isEmpty()) {
+            return;
+        }
+
         List<MediaFile> mediaFiles = new ArrayList<>();
         for (MultipartFile file : files) {
             String fileType = Optional.ofNullable(file.getContentType())
@@ -70,6 +83,60 @@ public class MediaFileServiceImpl implements IMediaFileService {
 
         result.putAll(found);
         return result;
+    }
+
+    @Override
+    public void deleteByOwner(String ownerType, String ownerId) {
+        List<MediaFile> mediaFiles = mediaFileRepository.findByOwnerTypeAndOwnerIdAndDeletedAtIsNull(ownerType, ownerId);
+        if (mediaFiles == null || mediaFiles.isEmpty()) {
+            return;
+        }
+
+        for (MediaFile mediaFile : mediaFiles) {
+            deleteFromDisk(mediaFile.getFileUrl());
+            mediaFile.setDeletedAt(Instant.now());
+        }
+        mediaFileRepository.saveAll(mediaFiles);
+        log.info("Deleted media files for ownerType: {}, ownerId: {}", ownerType, ownerId);
+    }
+
+    @Override
+    public List<MediaFile> findByOwner(String ownerType, String ownerId) {
+        return mediaFileRepository.findByOwnerTypeAndOwnerIdAndDeletedAtIsNull(ownerType, ownerId);
+    }
+
+    @Override
+    public Optional<MediaFile> findFirstByOwner(String ownerType, String ownerId) {
+        return mediaFileRepository.findFirstByOwnerTypeAndOwnerIdAndDeletedAtIsNull(ownerType, ownerId);
+    }
+
+    @Override
+    public Map<String, MediaFile> findMapByOwnerIds(String ownerType, List<String> ownerIds) {
+        if (ownerIds == null || ownerIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        List<MediaFile> files = mediaFileRepository.findByOwnerTypeAndOwnerIdInAndDeletedAtIsNull(ownerType, ownerIds);
+        Map<String, MediaFile> map = new HashMap<>();
+        for (MediaFile file : files) {
+            map.putIfAbsent(file.getOwnerId(), file);
+        }
+        return map;
+    }
+
+    private void deleteFromDisk(String fileUrl) {
+        if (fileUrl == null || fileUrl.isBlank()) {
+            return;
+        }
+        try {
+            Path basePath = Paths.get(BASE_PATH).toAbsolutePath().normalize();
+            Path filePath = Paths.get(fileUrl).toAbsolutePath().normalize();
+            if (filePath.startsWith(basePath)) {
+                Files.deleteIfExists(filePath);
+                log.info("Deleted file from disk: {}", filePath);
+            }
+        } catch (Exception e) {
+            log.error("Failed to delete file from disk: {}", fileUrl, e);
+        }
     }
 
     private String saveInDisk(String fileName, String folder, String type, byte[] data) {
