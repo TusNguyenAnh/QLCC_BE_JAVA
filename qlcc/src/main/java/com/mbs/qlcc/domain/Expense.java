@@ -29,6 +29,9 @@ public class Expense extends BaseEntity {
     @Column(name = "complex_id", nullable = false)
     private String complexId;
 
+    @Column(name = "equipment_id", nullable = false)
+    private String equipmentId;
+
     @Column(name = "type") // chi chung cum || chi theo toa
     private String type;
 

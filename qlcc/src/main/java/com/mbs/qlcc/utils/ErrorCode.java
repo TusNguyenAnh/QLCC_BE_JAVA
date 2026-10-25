@@ -233,7 +233,15 @@ public enum ErrorCode {
     FILE_NOT_ALLOWED(9204, "Định dạng file hoặc nội dung file không hợp lệ", HttpStatus.BAD_REQUEST),
     FILE_STORAGE_ERROR(9205, "Lỗi trong quá trình lưu trữ hoặc xử lý file", HttpStatus.INTERNAL_SERVER_ERROR),
     FILE_NOT_FOUND(9206, "File không tồn tại trên hệ thống", HttpStatus.NOT_FOUND),
+
+    // Equipment Errors (thêm vào enum ErrorCode, trước dấu ';' cuối cùng)
+    EQUIPMENT_NOT_FOUND(4200, "Thiết bị không tồn tại", HttpStatus.NOT_FOUND),
+    EQUIPMENT_CODE_EXISTED(4201, "Mã thiết bị đã tồn tại", HttpStatus.BAD_REQUEST),
+    EQUIPMENT_CODE_NOT_EMPTY(4202, "Mã thiết bị không được để trống", HttpStatus.BAD_REQUEST),
+    EQUIPMENT_NAME_NOT_EMPTY(4203, "Tên thiết bị không được để trống", HttpStatus.BAD_REQUEST),
+    EQUIPMENT_CATEGORY_NOT_EMPTY(4204, "Hạng mục không được để trống", HttpStatus.BAD_REQUEST),
     ;
+
 
     private int code;
     private String message;

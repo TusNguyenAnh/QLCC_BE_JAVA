@@ -71,7 +71,7 @@ public interface ITaskHistoryRepository extends JpaRepository<TaskHistory, Strin
             "WHERE th.org_id = :orgId " +
             "AND th.action = :status " +
             "AND th.approver_id = :approverId " +
-            ") th ON th.task_id = t.id " +
+            ") th ON th.task_id = t.id AND t.status = :status " +
             "JOIN task_type tt ON t.tasktype_id = tt.id " +
             "JOIN priority p ON tt.priority_id = p.id " +
             "JOIN organization o ON t.current_org_id = o.id " +

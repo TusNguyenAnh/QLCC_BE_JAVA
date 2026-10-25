@@ -21,6 +21,7 @@ public class ExpenseRequest {
     private BigDecimal totalAmount;
     private String description;
     private Instant payDate;
+    private String equipmentId;
     /** Chỉ có giá trị khi type = "cum"; bỏ qua khi type = "toa" */
     List<ExpenseDetailRequest> expenseDetails;
 }

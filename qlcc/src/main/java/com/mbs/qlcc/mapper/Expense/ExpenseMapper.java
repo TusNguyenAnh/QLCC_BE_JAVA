@@ -11,13 +11,13 @@ import java.util.stream.Collectors;
 
 public class ExpenseMapper {
     private ExpenseMapper() {
-        // utility class – không khởi tạo
     }
 
     public static Expense toExpense(ExpenseRequest request, String complexId, String createdBy) {
         return Expense.builder()
                 .taskId(request.getTaskId())
                 .complexId(complexId)
+                .equipmentId(request.getEquipmentId())
                 .type(request.getType())
                 .category(request.getCategory())
                 .totalAmount(request.getTotalAmount())

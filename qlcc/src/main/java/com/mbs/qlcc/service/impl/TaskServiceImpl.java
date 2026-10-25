@@ -1,9 +1,5 @@
 package com.mbs.qlcc.service.impl;
 
-import com.mbs.qlcc.domain.Expense;
-import com.mbs.qlcc.domain.Revenue;
-import com.mbs.qlcc.repository.Expense.IExpenseRepository;
-import com.mbs.qlcc.repository.Revenue.IRevenueRepository;
 import com.mbs.qlcc.domain.OrgUser;
 import com.mbs.qlcc.domain.Task;
 import com.mbs.qlcc.domain.TaskHistory;
@@ -20,8 +16,10 @@ import com.mbs.qlcc.dto.response.Task.ITaskSummaryResponse;
 import com.mbs.qlcc.dto.response.Task.TaskResponse;
 import com.mbs.qlcc.exception.AppException;
 import com.mbs.qlcc.mapper.Task.TaskMapper;
+import com.mbs.qlcc.repository.Expense.IExpenseRepository;
 import com.mbs.qlcc.repository.Organization.IOrgBuildingRepository;
 import com.mbs.qlcc.repository.Organization.IOrgUserRepository;
+import com.mbs.qlcc.repository.Revenue.IRevenueRepository;
 import com.mbs.qlcc.repository.Task.ITaskHistoryRepository;
 import com.mbs.qlcc.repository.Task.ITaskRepository;
 import com.mbs.qlcc.repository.Task.ITaskTypeRepository;
@@ -42,7 +40,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
